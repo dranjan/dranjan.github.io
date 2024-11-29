@@ -1,0 +1,8 @@
+$color-scheme: light-fira;
+
+@import url('https://free.bboxtype.com/embedfonts/?family=FiraSans:400,400i,500,500i,600,600i,700,700i');
+@import url('https://free.bboxtype.com/embedfonts/?family=FiraMono:400,700');
+
+$body-font-family: "Fira Sans", system-ui, -apple-system, blinkmacsystemfont, "Segoe UI",
+  roboto, "Helvetica Neue", arial, sans-serif, "Segoe UI Emoji" !default;
+$mono-font-family: "Fira Mono", "SFMono-Regular", menlo, consolas, monospace !default;
