@@ -6,7 +6,7 @@ layout: home
 ## Mathematical Art
 ### Super-Apollonian Fractal
 
-[![Link to image](images/apollonian-v01-thumb.png)](images/apollonian-v01.png)
+[![Link to image](assets/images/apollonian-v01-thumb.png)](assets/images/apollonian-v01.png)
 
 The Apollonian Gasket is a pretty well-known fractal that you get
 by taking four mutually tangent circles and then adding the
@@ -31,7 +31,7 @@ The image shown here is an attempt at a nice visualization of that concept.
 
 ### Twisted Pair Fractal
 
-[![Link to image](images/twisted-pair-v09-thumb.png)](images/twisted-pair-v09.png)
+[![Link to image](assets/images/twisted-pair-v09-thumb.png)](assets/images/twisted-pair-v09.png)
 
 This is a visualization of a particular two-generator Kleinian group.
 I'm working on a full description, but until that's done,
@@ -39,6 +39,6 @@ maybe you can reverse-engineer my work from the image!
 
 ### Pentagonal Wave Interference Fractal
 
-[![Link to image](images/pentafract-wave-center-vignette01-thumb.png)](images/pentafract-wave-center-vignette01.png)
+[![Link to image](assets/images/pentafract-wave-center-vignette01-thumb.png)](assets/images/pentafract-wave-center-vignette01.png)
 
 This is a quasi-periodic fractal made from wave interference patterns.
