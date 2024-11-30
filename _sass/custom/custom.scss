@@ -1,0 +1,14 @@
+@import url('https://free.bboxtype.com/embedfonts/?family=FiraSans:400,400i,500,500i,600,600i,700,700i');
+@import url('https://free.bboxtype.com/embedfonts/?family=FiraMono:400,700');
+
+body {
+  font-family: "Fira Sans", $body-font-family;
+}
+
+code {
+  font-family: "Fira Mono", $mono-font-family;
+}
+
+.text-mono {
+  font-family: "Fira Mono", $mono-font-family !important;
+}
