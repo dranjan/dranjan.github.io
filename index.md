@@ -6,7 +6,7 @@ layout: home
 ## Mathematical Art
 ### Super-Apollonian Fractal
 
-[![Link to image](assets/images/apollonian-v01-thumb.png)](assets/images/apollonian-v01.png)
+[![Link to image](assets/images/apollonian-v02-thumb.png)](assets/images/apollonian-v02.png)
 
 The Apollonian Gasket is a pretty well-known fractal that you get
 by taking four mutually tangent circles and then adding the
