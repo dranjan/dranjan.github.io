@@ -1,5 +1,78 @@
-@import url('https://free.bboxtype.com/embedfonts/?family=FiraSans:400,400i,500,500i,600,600i,700,700i');
-@import url('https://free.bboxtype.com/embedfonts/?family=FiraMono:400,700');
+$font-root: "../fonts";
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url("#{$font-root}/FiraSans-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: url("#{$font-root}/FiraSans-Italic.woff") format('woff');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 500;
+  src: url("#{$font-root}/FiraSans-Medium.woff") format('woff');
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 500;
+  src: url("#{$font-root}/FiraSans-MediumItalic.woff") format('woff');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url("#{$font-root}/FiraSans-SemiBold.woff") format('woff');
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: url("#{$font-root}/FiraSans-SemiBoldItalic.woff") format('woff');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url("#{$font-root}/FiraSans-Bold.woff") format('woff');
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: url("#{$font-root}/FiraSans-BoldItalic.woff") format('woff');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Fira Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: url("#{$font-root}/FiraMono-Regular.woff") format('woff');
+}
+
+@font-face {
+  font-family: 'Fira Mono';
+  font-style: normal;
+  font-weight: 700;
+  src: url("#{$font-root}/FiraMono-Bold.woff") format('woff');
+}
 
 body {
   font-family: "Fira Sans", $body-font-family;
