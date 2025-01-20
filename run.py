@@ -1,8 +1,7 @@
-from matplotlib import colormaps
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
-
-cmap = colormaps["plasma"]
 
 
 def generate(bits):
@@ -22,6 +21,5 @@ def generate(bits):
 
 bits = 8
 A = generate(bits)
-im = cmap(A)
-plt.imshow(A, cmap="plasma", origin="lower")
-plt.show()
+os.makedirs('build', exist_ok=True)
+plt.imsave('build/output.png', A, cmap="plasma", origin="lower")
