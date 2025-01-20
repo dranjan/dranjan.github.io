@@ -1,25 +1,28 @@
+"""
+Usage: python run.py
+
+Generates a visualization of a Hilbert curve. The output is saved in
+build/output.png.
+"""
 import os
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-def generate(bits):
+def hilbert_curve_coordinate(bits):
     A = np.array([[0]])
     n = 1
     for _ in range(bits):
         N = n*n
-        B = np.empty((2*n, 2*n), dtype=int)
-        B[:n, :n] = A.T
-        B[n:, :n] = A + N
-        B[n:, n:] = A + 2*N
-        B[:n, n:] = A.T[::-1, ::-1] + 3*N
         n += n
-        A = B
-    return A
+        A = np.array(
+            [[A.T, A.T[::-1, ::-1] + 3*N], [A + N, A + 2*N]]
+        ).transpose((0, 2, 1, 3)).reshape(n, n)
+    return A / (n*n)
 
 
 bits = 8
-A = generate(bits)
+A = hilbert_curve_coordinate(bits)
 os.makedirs('build', exist_ok=True)
 plt.imsave('build/output.png', A, cmap="plasma", origin="lower")
