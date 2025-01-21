@@ -6,8 +6,9 @@ build/output.png.
 """
 import os
 
-import matplotlib.pyplot as plt
+from matplotlib import colormaps
 import numpy as np
+import PIL
 
 
 def hilbert_curve_coordinate(bits):
@@ -24,5 +25,6 @@ def hilbert_curve_coordinate(bits):
 
 bits = 8
 A = hilbert_curve_coordinate(bits)
+image = PIL.Image.fromarray(colormaps["plasma"](A[::-1], bytes=True))
 os.makedirs('build', exist_ok=True)
-plt.imsave('build/output.png', A, cmap="plasma", origin="lower")
+image.save('build/favicon.ico')
