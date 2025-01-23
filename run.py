@@ -3,9 +3,10 @@ Usage: python run.py
 
 Generates a visualization of a Hilbert curve.
 
-There are two outputs:
+There are three outputs:
 1. ./build/favicon.ico
-2. ./build/output-padded.png
+2. ./build/output.png
+3. ./build/output-padded.png
 """
 import os
 
@@ -145,4 +146,5 @@ print(B.shape)
 print(image.shape)
 os.makedirs('build', exist_ok=True)
 PIL.Image.fromarray(image).save('build/favicon.ico')
+PIL.Image.fromarray(image).save('build/output.png')
 PIL.Image.fromarray(pad_image(image)).save('build/output-padded.png')
