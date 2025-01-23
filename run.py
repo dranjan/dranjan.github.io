@@ -46,104 +46,61 @@ def pad_image(image, vpad=0.5):
     image2[offset:offset + size0, offset:offset + size1] = image
     return image2
 
-bits = 6
-A = generate_image(bits)
 
-Au = A[1:]
-Ad = A[:-1]
-Aud0 = np.abs(Au - Ad)/2
-Aud1 = (Au + Ad)/2
-
-Ar = A[:, 1:]
-Al = A[:, :-1]
-Arl0 = np.abs(Ar - Al)/2
-Arl1 = (Ar + Al)/2
-
-Aur = Au[:, 1:]
-Aul = Au[:, :-1]
-Adr = Ad[:, 1:]
-Adl = Ad[:, :-1]
-Audrl_min = np.stack((Aur, Aul, Adr, Adl), axis=2).min(axis=2)
-Audrl_max = np.stack((Aur, Aul, Adr, Adl), axis=2).max(axis=2)
-Audrl0 = (Audrl_max - Audrl_min)/2
-Audrl1 = (Audrl_max + Audrl_min)/2
-
-print(Aud0.min(), Aud0.max())
-print(Arl0.min(), Arl0.max())
-print(Audrl0.min(), Audrl0.max())
-
-v0 = Aud0.min()
-v1 = 100
-v2 = 1
+def edge_filter(n):
+    """
+    Return a simple edge detection filter based on a Gaussian kernel.
+    The result will be square with 2*n + 1 elements on each side.
+    """
+    x = np.linspace(-10, 10, 2*n + 1)
+    y = x[:, None]
+    z = np.exp(-0.5*(x*x + y*y))
+    z /= -z.sum()
+    z[n, n] += 1
+    return z
 
 
-def get_scale(x):
-    return 1/(1 + ((x - v0)*v1)**v2)
-
-
-Aud0 = get_scale(Aud0)
-Arl0 = get_scale(Arl0)
-Audrl0 = get_scale(Audrl0)
-
-Bsize = 2*A.shape[0] - 1
-
-mask = np.ones((Bsize, Bsize))
-mask[1:-1:2, 1:-1:2] = Audrl0
-mask[::2, 1:-1:2] = Arl0
-mask[1:-1:2, ::2] = Aud0
-
-
-def make_stencil(n):
+def circular_stencil(n):
+    """
+    Return a binary mask of shape (2*n + 1, 2*n + 1) approximating a
+    filled circle.
+    """
     x = np.linspace(-1, 1, 2*n+1)
     y = x[:, None]
     return x*x + y*y <= 1
 
 
 def maxmin_filter(x, stencil):
+    """
+    Apply a minimum filter followed by a maximum filter to the input image.
+    """
     y = scipy.ndimage.minimum_filter(x, footprint=stencil, mode='constant')
     z = scipy.ndimage.maximum_filter(y, footprint=stencil, mode='constant')
     return z
 
 
-#masks = [mask]
-#for n in [1, 2, 3, 4]:
-#    stencil = make_stencil(n)
-#    masks.append(maxmin_filter(mask, stencil))
-#mask = np.sum(masks, axis=0)/len(masks)
+bits = 8
+A = generate_image(bits)
 
-stencil = make_stencil(1)
-mask1 = scipy.ndimage.minimum_filter(mask, footprint=stencil, mode='constant')
-mask1 = scipy.ndimage.maximum_filter(mask1, footprint=stencil, mode='constant')
-mask = 0.75*mask + 0.25*mask1
+e = scipy.signal.convolve(A + 4, edge_filter(5), mode='same')
+e = np.abs(e)
+v0 = e.min()
+v1 = 25
+v2 = 0.6
+v3 = 4
+
+mask = 1/(1 + ((e - v0)*v1)**v2)**v3
+
+masks = [mask]
+for n in [1, 2, 3, 4]:
+    masks.append(maxmin_filter(mask, circular_stencil(n)))
+mask = np.sum(masks, axis=0)/len(masks)
 
 cmap = colormaps["plasma"]
-
-B = np.empty((Bsize, Bsize, 4))
-B[..., 3] = 1
-B[::2, ::2, :] = cmap(A)
-B[1:-1:2, 1:-1:2, :3] = cmap(Audrl1)[..., :3]
-B[::2, 1:-1:2, :3] = cmap(Arl1)[..., :3]
-B[1:-1:2, ::2, :3] = cmap(Aud1)[..., :3]
+B = cmap(A)
 B[..., :3] *= mask[..., None]
 
-#plt.imshow(B, origin='lower')
-#plt.show()
-
-#fil0 = np.array([[1, -1], [1, -1]])
-#fil1 = np.array([[1, 1], [-1, -1]])
-#
-#A0 = np.abs(scipy.signal.convolve(A, fil0, mode='valid'))
-#A1 = np.abs(scipy.signal.convolve(A, fil1, mode='valid'))
-#Am = np.maximum(A0, A1)
-#import matplotlib.pyplot as plt
-#plt.imshow(np.log(Am), origin='lower', cmap='viridis')
-#print(Am.min())
-#plt.show()
-
-#image = colormaps["plasma"](A[::-1], bytes=True)
 image = (B[::-1]*255).astype(np.uint8)
-print(B.shape)
-print(image.shape)
 os.makedirs('build', exist_ok=True)
 PIL.Image.fromarray(image).save('build/favicon.ico')
 PIL.Image.fromarray(image).save('build/output.png')
