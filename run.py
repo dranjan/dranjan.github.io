@@ -13,9 +13,9 @@ import os
 from matplotlib import colormaps
 from matplotlib import pyplot as plt
 import numpy as np
+import PIL
 import scipy.signal
 import scipy.ndimage
-import PIL
 
 
 def generate_image(bits):
