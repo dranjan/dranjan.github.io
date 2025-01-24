@@ -1,3 +1,15 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Copyright 2025 Darsh Ranjan.
+#
+# /// script
+# dependencies = [
+#     "matplotlib",
+#     "numpy",
+#     "Pillow",
+#     "scipy",
+# ]
+# ///
 """
 Usage: python run.py
 
