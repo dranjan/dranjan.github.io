@@ -22,7 +22,6 @@ There are three outputs:
 """
 import os
 
-from matplotlib import colormaps
 from matplotlib import pyplot as plt
 import numpy as np
 import PIL
@@ -30,10 +29,11 @@ import scipy.signal
 import scipy.ndimage
 
 
-def generate_image(bits):
+def hilbert_data(bits):
     """
-    Generate the single-channel image. Its shape will be 2**bits by 2**bits,
-    and its values will be in the interval [0, 1).
+    Compute Hilbert curve coordinates on a power-of-two square grid.
+    The result has shape (2**bits, 2**bits) and values in the interval
+    [0, 1).
     """
     A = np.array([[0]])
     n = 1
@@ -91,9 +91,15 @@ def maxmin_filter(x, stencil):
     return z
 
 
+# This is the "pure" 2D Hilbert curve data. It makes a fine image on its
+# own, but we'll do some further processing to enhance edges and
+# corners.
 bits = 8
-A = generate_image(bits)
+A = hilbert_data(bits)
 
+# We do some edge enhancement here, specifically making them darker.
+# First we apply a linear edge detection filter, with some nonlinear
+# postprocessing.
 e = scipy.signal.convolve(A + 4, edge_filter(5), mode='same')
 e = np.abs(e)
 v0 = e.min()
@@ -103,12 +109,16 @@ v3 = 4
 
 mask = 1/(1 + ((e - v0)*v1)**v2)**v3
 
+# Finally we do some morphology here to enhance corners.
 masks = [mask]
 for n in [1, 2, 3, 4]:
     masks.append(maxmin_filter(mask, circular_stencil(n)))
 mask = np.sum(masks, axis=0)/len(masks)
 
-cmap = colormaps["plasma"]
+# It's worth experimenting with different colormaps here, but nothing
+# seems to beat plasma. We want something that's perceptually uniform
+# and doesn't get too light or dark.
+cmap = plt.get_cmap('plasma')
 B = cmap(A)
 B[..., :3] *= mask[..., None]
 
