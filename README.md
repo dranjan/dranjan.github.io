@@ -1,6 +1,6 @@
-This is the code I use to generate my website's favicon and my GitHub avatar.
-To run it, create a Python3 `virtualenv` environment and install the
-dependencies there:
+This is the code I use to generate my website's favicon and my GitHub
+avatar.  To run it, create a Python3 `virtualenv` environment and
+install the dependencies there:
 
 - NumPy
 - SciPy
@@ -14,20 +14,33 @@ Alternatively, if you have `uv`, you can simply `uv run run.py`.
 
 ## What Is It?
 
-It's a visualization of a Hilbert curve, a two-dimensional plane-filling
-curve. More precisely, it's a continuous mapping from the unit interval
-$[0, 1]$ to the unit square $[0, 1]\times [0, 1]$. To complete the
-visualization, choose any one-dimensional colormap for the input
-interval and push it forward to the square. Here, we've chosen Matplotlib's
-`plasma` colormap. Finally, we do some image processing to enhance edges
-and corners. That's really optional, but it makes the result more
-visually interesting in my opinion.
+It's a visualization of a Hilbert curve. A Hilbert curve is a
+two-dimensional plane-filling curve, or more precisely a continuous
+surjective mapping from the unit interval $[0, 1]$ to the unit square
+$[0, 1]\times [0, 1]$. The mapping isn't injective, but it's
+approximated arbitrarily well by injective mappings.
+
+To make the visualization, we choose a one-dimensional colormap for the
+input interval and push it forward with the surjective mapping to color
+the square. As I said earlier, the mapping isn't injective, but that's
+fine, since we can use the injective approximations I mentioned. That
+works particularly well if our square image has a power-of-two number of
+pixels, because that means we can conveniently make the injective
+approximation visit each pixel exactly once.
+
+Finally, we do some image processing to enhance edges and corners.
+That's really optional, but it makes the result more visually
+interesting in my opinion.
 
 ## Acknowledgements
 
-A lot of heavy lifting is being done by Matplotlib's excellent
-`plasma` colormap, so credit is due to [St&eacute;fan van der Walt and
-Nathaniel Smith](https://bids.github.io/colormap/).
+A lot of heavy lifting is being done by the colormap. The
+scientific Python community has done some great work in creating
+colormaps that are both visually appealing and avoid distortion as
+perceived visually by humans, and both of those qualities are valuable
+here. The one I've selected here is `plasma`, which is part of
+Matplotlib and was created by [St&eacute;fan van der Walt and Nathaniel
+Smith](https://bids.github.io/colormap/).
 
 ## Copyright
 
