@@ -99,12 +99,20 @@ def edge_filter(n):
     Return a simple edge detection filter based on a Gaussian kernel.
     The result will be square with 2*n + 1 elements on each side.
     """
-    x = np.linspace(-10, 10, 2*n + 1)
-    y = x[:, None]
-    z = np.exp(-0.5*(x*x + y*y))
-    z /= -z.sum()
+    z = -gaussian_filter(n, n/10)
     z[n, n] += 1
     return z
+
+
+def gaussian_filter(n, r):
+    """
+    Return a Gaussian convolution kernel. The filter coefficients are
+    normalized to sum to 1.
+    """
+    x = np.linspace(-1, 1, 2*n + 1)
+    y = np.exp(-0.5*(x*(n/r))**2)
+    z = y*y[:, None]
+    return z / z.sum()
 
 
 def circular_stencil(n):
