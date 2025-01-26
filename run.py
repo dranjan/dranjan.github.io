@@ -41,6 +41,14 @@ def hilbert_data(bits):
     return A
 
 
+def cyclic_hilbert_data(bits):
+    """
+    Compute a cyclic variant of the Hilbert curve.
+    """
+    A = hilbert_data(bits - 1)
+    return np.block([[A[::-1, ::-1], A[::-1, ::-1] + 3], [A + 1, A + 2]])/4
+
+
 def pad_image(image, vpad=1.0):
     """
     Add a transparent border to the given image. The result will be (1 + vpad)
