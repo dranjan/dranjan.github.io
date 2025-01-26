@@ -98,6 +98,8 @@ A = hilbert_data(bits)
 e = scipy.signal.convolve(A + 4, edge_filter(5), mode='same')
 e = np.abs(e)
 v0 = e.min()
+
+# These magic numbers were tweaked until the result was acceptable.
 v1 = 25
 v2 = 0.6
 v3 = 4
