@@ -4,7 +4,6 @@
 #
 # /// script
 # dependencies = [
-#     "cmasher",
 #     "matplotlib",
 #     "numpy",
 #     "Pillow",
@@ -29,8 +28,6 @@ import PIL
 import scipy.signal
 import scipy.ndimage
 
-import cmasher as cmr
-
 
 def hilbert_data(bits):
     """
@@ -44,15 +41,7 @@ def hilbert_data(bits):
     return A
 
 
-def cyclic_hilbert_data(bits):
-    """
-    Compute a cyclic variant of the Hilbert curve.
-    """
-    A = hilbert_data(bits - 1)
-    return np.block([[A[::-1, ::-1], A[::-1, ::-1] + 3], [A + 1, A + 2]])/4
-
-
-def color_image(x, cyclic=False,  v1=25, v2=0.6, v3=2, v4=0.93, v5=1.5):
+def color_image(x, v1=25, v2=0.6, v3=2, v4=0.93, v5=1.5):
     """
     Get RGBA data from the Hilbert curve coordinates. Edges will be
     darkened, and corners will be rounded.
@@ -64,10 +53,6 @@ def color_image(x, cyclic=False,  v1=25, v2=0.6, v3=2, v4=0.93, v5=1.5):
     # First we compute a mask to darken edges.
     e = scipy.signal.convolve(x + 4, edge_filter(1), mode='same')
     e = np.abs(e)
-    if cyclic:
-        # This is a quick hack that works well in practice, not
-        # something mathematically principled.
-        e = np.minimum(e, e[::-1])
 
     mask = 1/(1 + ((e - e.min())*v1)**v2)**v3
 
@@ -86,7 +71,7 @@ def color_image(x, cyclic=False,  v1=25, v2=0.6, v3=2, v4=0.93, v5=1.5):
     # It's worth experimenting with different colormaps here.
     # We want something that's perceptually uniform and doesn't get too
     # light or dark.
-    cmap = plt.get_cmap('cmr.seasons' if cyclic else 'plasma')
+    cmap = plt.get_cmap('plasma')
     y = cmap(x)
     y[mask0, :3] *= mask[mask0, None]
     y[mask1, :3] = 1 - (1 - y[mask1, :3])*(v5 - mask[mask1, None])/(v5 - 1)
@@ -155,10 +140,9 @@ def pad_image(image, vpad=1.0, r=15, s=(3, 3)):
     return image2
 
 
-cyclic = False
 bits = 8
-A = (cyclic_hilbert_data if cyclic else hilbert_data)(bits)
-B = color_image(A, cyclic=cyclic)
+A = hilbert_data(bits)
+B = color_image(A)
 image = (B[::-1]*255).astype(np.uint8)
 os.makedirs('build', exist_ok=True)
 PIL.Image.fromarray(image).save('build/favicon.ico')
