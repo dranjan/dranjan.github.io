@@ -36,14 +36,9 @@ def hilbert_data(bits):
     [0, 1).
     """
     A = np.array([[0]])
-    n = 1
     for _ in range(bits):
-        N = n*n
-        n += n
-        A = np.array(
-            [[A.T, A.T[::-1, ::-1] + 3*N], [A + N, A + 2*N]]
-        ).transpose((0, 2, 1, 3)).reshape(n, n)
-    return A / (n*n)
+        A = np.block([[A.T, A.T[::-1, ::-1] + 3], [A + 1, A + 2]])/4
+    return A
 
 
 def pad_image(image, vpad=0.5):
