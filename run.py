@@ -112,12 +112,22 @@ for n in [1, 2, 3, 4]:
     masks.append(maxmin_filter(mask, circular_stencil(n)))
 mask = np.sum(masks, axis=0)/len(masks)
 
+# More magic numbers. The mask logic above darkens the whole image by
+# a little bit. This correction brings the lightness back up.
+v4 = 0.88
+v5 = 1.5
+mask = mask / v4
+mask0 = mask <= 1
+mask1 = mask0 ^ True
+
 # It's worth experimenting with different colormaps here, but nothing
 # seems to beat plasma. We want something that's perceptually uniform
 # and doesn't get too light or dark.
 cmap = plt.get_cmap('plasma')
 B = cmap(A)
-B[..., :3] *= mask[..., None]
+B[mask0, :3] *= mask[mask0, None]
+B[mask1, :3] = 1 - (1 - B[mask1, :3])*(v5 - mask[mask1, None])/(v5 - 1)
+#B[..., 3] = mask
 
 image = (B[::-1]*255).astype(np.uint8)
 os.makedirs('build', exist_ok=True)
