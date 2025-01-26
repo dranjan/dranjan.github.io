@@ -71,7 +71,7 @@ def color_image(x, cyclic=False,  v1=25, v2=0.6, v3=2, v4=0.93, v5=1.5):
 
     mask = 1/(1 + ((e - e.min())*v1)**v2)**v3
 
-    # Now we do some morphology here to enhance corners.
+    # Now we do some morphology to enhance corners.
     masks = [mask]
     for n in [1, 2, 3, 4]:
         masks.append(maxmin_filter(mask, circular_stencil(n)))
