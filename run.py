@@ -120,9 +120,9 @@ mask = mask / v4
 mask0 = mask <= 1
 mask1 = mask0 ^ True
 
-# It's worth experimenting with different colormaps here, but nothing
-# seems to beat plasma. We want something that's perceptually uniform
-# and doesn't get too light or dark.
+# It's worth experimenting with different colormaps here.
+# We want something that's perceptually uniform and doesn't get too
+# light or dark.
 cmap = plt.get_cmap('plasma')
 B = cmap(A)
 B[mask0, :3] *= mask[mask0, None]
