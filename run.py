@@ -41,7 +41,7 @@ def hilbert_data(bits):
     return A
 
 
-def pad_image(image, vpad=0.5):
+def pad_image(image, vpad=1.0):
     """
     Add a transparent border to the given image. The result will be (1 + vpad)
     times as large as the input on the vertical axis, with equal padding on all
