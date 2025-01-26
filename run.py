@@ -41,20 +41,15 @@ def hilbert_data(bits):
     return A
 
 
-def color_image(x, v1=25, v2=0.6, v3=2, v4=0.93, v5=1.5):
+def color_image(x):
     """
     Get RGBA data from the Hilbert curve coordinates. Edges will be
     darkened, and corners will be rounded.
-
-    TODO: the parameters above are pretty brittle and difficult to tweak
-    manually. The defaults don't work well for all image sizes, and the
-    parameters' behaviors are pretty tightly coupled.
     """
     # First we compute a mask to darken edges.
     e = scipy.signal.convolve(x + 4, edge_filter(1), mode='same')
-    e = np.abs(e)
-
-    mask = 1/(1 + ((e - e.min())*v1)**v2)**v3
+    mask = -np.log(np.abs(e))
+    mask -= mask.min()
 
     # Now we do some morphology to enhance corners.
     masks = [mask]
@@ -62,9 +57,10 @@ def color_image(x, v1=25, v2=0.6, v3=2, v4=0.93, v5=1.5):
         masks.append(maxmin_filter(mask, circular_stencil(n)))
     mask = np.sum(masks, axis=0)/len(masks)
 
-    # The mask logic above darkens the whole image by a little bit. This
-    # correction brings the lightness back up.
-    mask = mask / v4
+    # We separate the mask into two halves, a darkening mask and a
+    # lightening mask.
+    mask /= np.quantile(mask, 0.5)
+    v1 = mask.max() + 1.0
     mask0 = mask <= 1
     mask1 = mask0 ^ True
 
@@ -74,7 +70,7 @@ def color_image(x, v1=25, v2=0.6, v3=2, v4=0.93, v5=1.5):
     cmap = plt.get_cmap('plasma')
     y = cmap(x)
     y[mask0, :3] *= mask[mask0, None]
-    y[mask1, :3] = 1 - (1 - y[mask1, :3])*(v5 - mask[mask1, None])/(v5 - 1)
+    y[mask1, :3] = 1 - (1 - y[mask1, :3])*(v1 - mask[mask1, None])/(v1 - 1)
 
     return y
 
