@@ -134,7 +134,7 @@ def maxmin_filter(x, stencil):
     return z
 
 
-def pad_image(image, vpad=1.0, r=10, s=(3, 3)):
+def pad_image(image, vpad=1.0, r=15, s=(3, 3)):
     """
     Add a transparent border to the given image. The result will be (1 + vpad)
     times as large as the input on the vertical axis, with equal padding on all
@@ -154,8 +154,7 @@ def pad_image(image, vpad=1.0, r=10, s=(3, 3)):
     bg = np.ones(image2.shape[:2])
     bg[offset:offset + size0, offset:offset + size1] = 0
     d = scipy.ndimage.distance_transform_edt(bg)
-    #alpha = np.maximum(0, r - d) / r
-    alpha = np.exp(-0.5*(d/r)**2)
+    alpha = np.maximum(0, r - d) / r
     alpha = (alpha*255).astype(np.uint8)
     alpha = np.roll(alpha, s[0], axis=0)
     alpha = np.roll(alpha, s[1], axis=1)
