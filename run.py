@@ -62,7 +62,7 @@ def color_image(x, cyclic=False,  v1=25, v2=0.6, v3=2, v4=0.93, v5=1.5):
     parameters' behaviors are pretty tightly coupled.
     """
     # First we compute a mask to darken edges.
-    e = scipy.signal.convolve(x + 4, edge_filter(5), mode='same')
+    e = scipy.signal.convolve(x + 4, edge_filter(1), mode='same')
     e = np.abs(e)
     if cyclic:
         # This is a quick hack that works well in practice, not
@@ -99,20 +99,11 @@ def edge_filter(n):
     Return a simple edge detection filter based on a Gaussian kernel.
     The result will be square with 2*n + 1 elements on each side.
     """
-    z = -gaussian_filter(n, n/10)
-    z[n, n] += 1
-    return z
-
-
-def gaussian_filter(n, r):
-    """
-    Return a Gaussian convolution kernel. The filter coefficients are
-    normalized to sum to 1.
-    """
-    x = np.linspace(-1, 1, 2*n + 1)
-    y = np.exp(-0.5*(x*(n/r))**2)
-    z = y*y[:, None]
-    return z / z.sum()
+    x = np.r_[-n:n+1]
+    y = np.maximum(0, n + 1 - np.hypot(x, x[:, None]))
+    y /= -y.sum()
+    y[n, n] += 1
+    return y
 
 
 def circular_stencil(n):
