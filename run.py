@@ -18,7 +18,7 @@ Generates a visualization of a Hilbert curve.
 There are three outputs:
 1. ./build/favicon.ico
 2. ./build/output.png
-3. ./build/output-padded.png
+3. ./build/avatar.png
 """
 import os
 
@@ -107,25 +107,25 @@ def maxmin_filter(A, stencil):
     return C
 
 
-def pad_image(A, vpad=1.0, r=10, s=(3, 3)):
+def pad_image(A, dim=(460, 460), r=10, s=(3, 3)):
     """
-    Add a transparent border to the given image. The result will be (1 + vpad)
-    times as large as the input on the vertical axis, with equal padding on all
-    four sides.
+    Add a transparent border to the given image, padding it to the specified
+    dimensions. The input image will be centered in the result.
 
     The image will have a black border that fades away from the image. A shift
     can also be applied to add the illusion of depth.
     """
     size0, size1 = A.shape[:2]
-    offset = int(size0 * (vpad/2))
-    B = np.zeros((size0 + 2*offset, size1 + 2*offset, 4), dtype=np.uint8)
-    B[offset:offset + size0, offset:offset + size1] = A
+    offset0 = (dim[0] - size0)//2
+    offset1 = (dim[1] - size1)//2
+    B = np.zeros((dim[0], dim[1], 4), dtype=np.uint8)
+    B[offset0:offset0 + size0, offset1:offset1 + size1] = A
 
     # Here's the black border and shadow. distance_transforme_edt is a
     # little bit too much machinery for what we're doing here, but we
     # already have the dependency and it's a one-liner, so...
     bg = np.ones(B.shape[:2])
-    bg[offset:offset + size0, offset:offset + size1] = 0
+    bg[offset0:offset0 + size0, offset1:offset1 + size1] = 0
     d = scipy.ndimage.distance_transform_edt(bg)
     alpha = np.maximum(0, r - d) / r
     alpha = (alpha*255).astype(np.uint8)
@@ -159,5 +159,4 @@ image = shrink_image(image)
 os.makedirs('build', exist_ok=True)
 PIL.Image.fromarray(image).save('build/favicon.ico')
 PIL.Image.fromarray(image).save('build/output.png')
-pad = 460/image.shape[0] - 1
-PIL.Image.fromarray(pad_image(image, pad)).save('build/output-padded.png')
+PIL.Image.fromarray(pad_image(image)).save('build/avatar.png')
