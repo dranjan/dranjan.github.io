@@ -49,7 +49,7 @@ def color_image(A):
     # First we compute a mask to darken edges.
     e = scipy.signal.convolve(A + 4, edge_filter(1), mode='same')
     mask = -np.log(np.abs(e))
-    mask -= mask[mask.shape[0]//8, mask.shape[1]//2]
+    mask -= mask[mask.shape[0]//2, mask.shape[1]//2]
     mask[mask < 0] = 0
 
     # Now we do some morphology to enhance corners.
