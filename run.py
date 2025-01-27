@@ -143,4 +143,5 @@ image = (B[::-1]*255).astype(np.uint8)
 os.makedirs('build', exist_ok=True)
 PIL.Image.fromarray(image).save('build/favicon.ico')
 PIL.Image.fromarray(image).save('build/output.png')
-PIL.Image.fromarray(pad_image(image)).save('build/output-padded.png')
+pad = 460/2**bits - 1
+PIL.Image.fromarray(pad_image(image, pad)).save('build/output-padded.png')
