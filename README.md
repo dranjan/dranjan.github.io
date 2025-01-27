@@ -1,5 +1,5 @@
 This is the code I use to generate my website's favicon and my GitHub
-avatar.  To run it, create a Python3 `virtualenv` environment and
+avatar. To run it, create a Python3 `virtualenv` environment and
 install the dependencies there:
 
 - NumPy
@@ -29,8 +29,14 @@ pixels, because that means we can conveniently make the injective
 approximation visit each pixel exactly once.
 
 Finally, we do some image processing to enhance edges and corners.
-That's really optional, but it makes the result more visually
-interesting in my opinion.
+That's really optional, and whether this step improves the result or not
+is a matter of personal taste. I find myself going back and
+forth on it, and I can make both an aesthetic and mathematical case for
+either version. Ultimately, I keep the extra postprocessing because:
+
+1. it makes it easier to see how the interval snakes its way across the
+   square, and
+2. it makes the fractal structure easier to see.
 
 ## Acknowledgements
 
@@ -38,8 +44,8 @@ A lot of heavy lifting is being done by the colormap. The
 scientific Python community has done some great work in creating
 colormaps that are both visually appealing and avoid distortion as
 perceived visually by humans, and both of those qualities are valuable
-here. The one I've selected here is `plasma`, which is part of
-Matplotlib and was created by [St&eacute;fan van der Walt and Nathaniel
+here. The one I've selected here is Matplotlib's `plasma`, which
+was created by [St&eacute;fan van der Walt and Nathaniel
 Smith](https://bids.github.io/colormap/).
 
 ## Copyright
