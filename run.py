@@ -54,7 +54,7 @@ def color_image(x):
 
     # Now we do some morphology to enhance corners.
     masks = [mask]
-    for n in [1, 2, 3, 4]:
+    for n in range(1, 11):
         masks.append(maxmin_filter(mask, circular_stencil(n)))
     mask = np.sum(masks, axis=0)/len(masks)
 
@@ -107,7 +107,7 @@ def maxmin_filter(x, stencil):
     return z
 
 
-def pad_image(image, vpad=1.0, r=15, s=(3, 3)):
+def pad_image(image, vpad=1.0, r=10, s=(3, 3)):
     """
     Add a transparent border to the given image. The result will be (1 + vpad)
     times as large as the input on the vertical axis, with equal padding on all
@@ -137,12 +137,27 @@ def pad_image(image, vpad=1.0, r=15, s=(3, 3)):
     return image2
 
 
-bits = 8
+def shrink_image(x):
+    """
+    Shrink the input image by a factor of two. This is done carefully
+    by first adding a one-pixel border, so that internal Hilbert
+    curve borders get sharpened.
+    """
+    s0, s1 = x.shape[:2]
+    y = np.zeros((s0 + 2, s1 + 2, 4), dtype=np.uint8)
+    y[..., 3] = 255
+    y[1:-1, 1:-1, :] = x
+    y = y.reshape(s0//2 + 1, 2,  s1//2 + 1, 2, 4)
+    return y.mean(axis=(1, 3)).astype(np.uint8)
+
+
+bits = 9
 A = hilbert_data(bits)
 B = color_image(A)
 image = (B[::-1]*255).astype(np.uint8)
+image = shrink_image(image)
 os.makedirs('build', exist_ok=True)
 PIL.Image.fromarray(image).save('build/favicon.ico')
 PIL.Image.fromarray(image).save('build/output.png')
-pad = 460/2**bits - 1
+pad = 460/image.shape[0] - 1
 PIL.Image.fromarray(pad_image(image, pad)).save('build/output-padded.png')
