@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="https://github.com/dranjan.png">
+</div>
+
 This is the code I use to generate my website's favicon and my GitHub
 avatar. To run it, create a Python3 `virtualenv` environment and
 install the dependencies there:
