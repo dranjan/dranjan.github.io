@@ -42,6 +42,10 @@ either version. Ultimately, I keep the extra postprocessing because:
    square, and
 2. it makes the fractal structure easier to see.
 
+Since website favicons are typically rendered at very small sizes, it
+hardly makes any difference there at all, but for simplicity, I try to
+use the same version everywhere.
+
 ## Acknowledgements
 
 A lot of heavy lifting is being done by the colormap. The
