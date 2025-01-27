@@ -11,10 +11,10 @@ install the dependencies there:
 - Pillow
 - Matplotlib
 
-Then run `python run.py` after activating the `virtualenv` environment.
+Then run `python hilbert.py` after activating the `virtualenv` environment.
 The outputs will be generated under `./build`.
 
-Alternatively, if you have `uv`, you can simply `uv run run.py`.
+Alternatively, if you have `uv`, you can simply `uv run hilbert.py`.
 
 ## What Is It?
 
