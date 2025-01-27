@@ -49,7 +49,7 @@ use the same version everywhere.
 ## Acknowledgements
 
 A lot of heavy lifting is being done by the colormap. The
-scientific Python community has done some great work in creating
+scientific programming community has done some great work in creating
 colormaps that are both visually appealing and avoid distortion as
 perceived visually by humans, and both of those qualities are valuable
 here. The one I've selected here is Matplotlib's `plasma`, which
