@@ -41,13 +41,13 @@ def hilbert_data(bits):
     return A
 
 
-def color_image(x):
+def color_image(A):
     """
     Get RGBA data from the Hilbert curve coordinates. Edges will be
     darkened, and corners will be rounded.
     """
     # First we compute a mask to darken edges.
-    e = scipy.signal.convolve(x + 4, edge_filter(1), mode='same')
+    e = scipy.signal.convolve(A + 4, edge_filter(1), mode='same')
     mask = -np.log(np.abs(e))
     mask -= mask[mask.shape[0]//8, mask.shape[1]//2]
     mask[mask < 0] = 0
@@ -69,11 +69,11 @@ def color_image(x):
     # We want something that's perceptually uniform and doesn't get too
     # light or dark.
     cmap = plt.get_cmap('plasma')
-    y = cmap(x)
-    y[mask0, :3] *= mask[mask0, None]
-    y[mask1, :3] = 1 - (1 - y[mask1, :3])*(v1 - mask[mask1, None])/(v1 - 1)
+    B = cmap(A)
+    B[mask0, :3] *= mask[mask0, None]
+    B[mask1, :3] = 1 - (1 - B[mask1, :3])*(v1 - mask[mask1, None])/(v1 - 1)
 
-    return y
+    return B
 
 
 def edge_filter(n):
@@ -82,10 +82,10 @@ def edge_filter(n):
     The result will be square with 2*n + 1 elements on each side.
     """
     x = np.r_[-n:n+1]
-    y = np.maximum(0, n + 1 - np.hypot(x, x[:, None]))
-    y /= -y.sum()
-    y[n, n] += 1
-    return y
+    A = np.maximum(0, n + 1 - np.hypot(x, x[:, None]))
+    A /= -A.sum()
+    A[n, n] += 1
+    return A
 
 
 def circular_stencil(n):
@@ -98,16 +98,16 @@ def circular_stencil(n):
     return x*x + y*y <= 1
 
 
-def maxmin_filter(x, stencil):
+def maxmin_filter(A, stencil):
     """
     Apply a minimum filter followed by a maximum filter to the input image.
     """
-    y = scipy.ndimage.minimum_filter(x, footprint=stencil, mode='constant')
-    z = scipy.ndimage.maximum_filter(y, footprint=stencil, mode='constant')
-    return z
+    B = scipy.ndimage.minimum_filter(A, footprint=stencil, mode='constant')
+    C = scipy.ndimage.maximum_filter(B, footprint=stencil, mode='constant')
+    return C
 
 
-def pad_image(image, vpad=1.0, r=10, s=(3, 3)):
+def pad_image(A, vpad=1.0, r=10, s=(3, 3)):
     """
     Add a transparent border to the given image. The result will be (1 + vpad)
     times as large as the input on the vertical axis, with equal padding on all
@@ -116,15 +116,15 @@ def pad_image(image, vpad=1.0, r=10, s=(3, 3)):
     The image will have a black border that fades away from the image. A shift
     can also be applied to add the illusion of depth.
     """
-    size0, size1 = image.shape[:2]
+    size0, size1 = A.shape[:2]
     offset = int(size0 * (vpad/2))
-    image2 = np.zeros((size0 + 2*offset, size1 + 2*offset, 4), dtype=np.uint8)
-    image2[offset:offset + size0, offset:offset + size1] = image
+    B = np.zeros((size0 + 2*offset, size1 + 2*offset, 4), dtype=np.uint8)
+    B[offset:offset + size0, offset:offset + size1] = A
 
     # Here's the black border and shadow. distance_transforme_edt is a
     # little bit too much machinery for what we're doing here, but we
     # already have the dependency and it's a one-liner, so...
-    bg = np.ones(image2.shape[:2])
+    bg = np.ones(B.shape[:2])
     bg[offset:offset + size0, offset:offset + size1] = 0
     d = scipy.ndimage.distance_transform_edt(bg)
     alpha = np.maximum(0, r - d) / r
@@ -132,23 +132,23 @@ def pad_image(image, vpad=1.0, r=10, s=(3, 3)):
     alpha = np.roll(alpha, s[0], axis=0)
     alpha = np.roll(alpha, s[1], axis=1)
 
-    image2[..., 3] = np.maximum(image2[..., 3], alpha)
+    B[..., 3] = np.maximum(B[..., 3], alpha)
 
-    return image2
+    return B
 
 
-def shrink_image(x):
+def shrink_image(A):
     """
     Shrink the input image by a factor of two. This is done carefully
     by first adding a one-pixel border, so that internal Hilbert
     curve borders get sharpened.
     """
-    s0, s1 = x.shape[:2]
-    y = np.zeros((s0 + 2, s1 + 2, 4), dtype=np.uint8)
-    y[..., 3] = 255
-    y[1:-1, 1:-1, :] = x
-    y = y.reshape(s0//2 + 1, 2,  s1//2 + 1, 2, 4)
-    return y.mean(axis=(1, 3)).astype(np.uint8)
+    s0, s1 = A.shape[:2]
+    B = np.zeros((s0 + 2, s1 + 2, 4), dtype=np.uint8)
+    B[..., 3] = 255
+    B[1:-1, 1:-1, :] = A
+    B = B.reshape(s0//2 + 1, 2,  s1//2 + 1, 2, 4)
+    return B.mean(axis=(1, 3)).astype(np.uint8)
 
 
 bits = 9
