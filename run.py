@@ -17,7 +17,7 @@ Generates a visualization of a Hilbert curve.
 
 There are three outputs:
 1. ./build/favicon.ico
-2. ./build/output.png
+2. ./build/hilbert.png
 3. ./build/avatar.png
 """
 import os
@@ -158,5 +158,5 @@ image = (B[::-1]*255).astype(np.uint8)
 image = shrink_image(image)
 os.makedirs('build', exist_ok=True)
 PIL.Image.fromarray(image).save('build/favicon.ico')
-PIL.Image.fromarray(image).save('build/output.png')
+PIL.Image.fromarray(image).save('build/hilbert.png')
 PIL.Image.fromarray(pad_image(image)).save('build/avatar.png')
