@@ -41,10 +41,13 @@ def hilbert_data(bits):
     return A
 
 
-def color_image(A):
+def color_image(A, roundness=11):
     """
     Get RGBA data from the Hilbert curve coordinates. Edges will be
     darkened, and corners will be rounded.
+
+    The `roundness` parameter can be any nonnegative integer, and a
+    value of 0 disables the corner-rounding entirely.
     """
     # First we compute a mask to darken edges.
     e = scipy.signal.convolve(A + 4, edge_filter(1), mode='same')
@@ -54,7 +57,7 @@ def color_image(A):
 
     # Now we do some morphology to enhance corners.
     masks = [mask]
-    for n in range(1, 11):
+    for n in range(1, roundness):
         masks.append(maxmin_filter(mask, circular_stencil(n)))
     mask = np.sum(masks, axis=0)/len(masks)
 
