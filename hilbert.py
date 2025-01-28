@@ -81,7 +81,7 @@ def color_image(A, roundness=11):
 
 def edge_filter(n):
     """
-    Return a simple edge detection filter based on a Gaussian kernel.
+    Return a simple edge detection filter.
     The result will be square with 2*n + 1 elements on each side.
     """
     x = np.r_[-n:n+1]
