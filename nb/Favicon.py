@@ -1,7 +1,10 @@
 # ---
 # jupyter:
+#   jekyll:
+#     katex: true
 #   jupytext:
 #     formats: ipynb,py:light
+#     notebook_metadata_filter: jekyll
 #     text_representation:
 #       extension: .py
 #       format_name: light
@@ -11,8 +14,6 @@
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
-#   jekyll:
-#     katex: True
 # ---
 
 # # About the Favicon
@@ -25,10 +26,10 @@
 #
 # ## The Hilbert Curve
 #
-# It's a Hilbert Curve.
+# It's a Hilbert curve.
 #
 # As you may have noticed, I'm kind of a fan of fractals.
-# As far as fractals go, the Hilbert Curve is a true classic, dating back to 1891 when it was first discovered by the legendary mathematician David Hilbert.
+# As far as fractals go, the Hilbert curve is a true classic, dating back to 1891 when it was first discovered by the legendary mathematician David Hilbert.
 # It belongs to a class of fractals called _space-filling curves_.
 # Nowadays we know of countless examples of space-filling curves, but Hilbert's is still remarkable in its simplicity.
 # It can be defined as the unique continuous function <!--begin:mathinline-->$H:[0,1]\to[0,1]\times[0,1]$<!--end:mathinline-->
@@ -50,8 +51,10 @@
 #
 # As for implementation, we can pretty much use exactly that, although technically what we compute is
 # more like the inverse of that mapping.
-# (Computing the inverse is straightforward, since each of the four cases in the recursive part of the functional equation
-# maps one of the four quarters of the unit interval onto one of the four quadrants of the unit square.)
+# (Computing an inverse is straightforward, since each of the four cases in the recursive part of the functional equation
+# maps one of the four quarters of the unit interval onto one of the four quadrants of the unit square.
+# The only complication is that there isn't a unique inverse because <!--begin:mathinline-->$H$<!--end:mathinline-->
+# is not one-to-one, but that isn't a problem for us.)
 #
 # Here's the game plan: first we'll pick a nice colormap for the input interval <!--begin:mathinline-->$[0, 1]$<!--end:mathinline-->, and then we'll
 # apply the <!--begin:mathinline-->$H$<!--end:mathinline--> function above to transfer the colors onto the square.
@@ -62,7 +65,12 @@
 # By choosing a power-of-two grid for the square, we can additionally ensure that these
 # approximations touch each pixel exactly once, so it's kind of perfect.
 #
-# If you want to follow along with my implementation, you'll need a way to visualize raw RGBA data.
+# As far as colormaps go, right now we mainly just want something that's dynamic and perceptually uniform,
+# but later on we'll also want it to avoid becoming overly dark.
+# It seems quite difficult to achieve all of those and still maintain some semblance of aesthetics,
+# but Matplotlib's `plasma` does it pretty well in my opinion, so that's what we'll use.
+#
+# As we get started with code, if you want to follow along with this implementation, you'll need a way to visualize raw RGBA data.
 # I suggest using a [Jupyter](https://jupyter.org/) notebook, in which case we can do it conveniently like this:
 
 # +
@@ -77,17 +85,20 @@ def show(rgba):
 
 # -
 
-# All right! And now the implementation:
+# All right! And now here's the implementation of all of that math:
 
 # +
 import matplotlib.pyplot as plt
 import numpy as np
 
-bits = 9
-A = np.array([[0.5]])
-for _ in range(bits):
-    A = np.block([[A.T, A.T[::-1, ::-1] + 3], [A + 1, A + 2]])/4
+def hilbert_data(bits):
+    A = np.array([[0.5]])
+    for _ in range(bits):
+        A = np.block([[A.T, A.T[::-1, ::-1] + 3], [A + 1, A + 2]])/4
+    return A
 
+bits = 9
+A = hilbert_data(bits)
 cmap = plt.get_cmap('plasma')
 B = cmap(A)
 show(B)
@@ -99,10 +110,83 @@ show(B)
 # but in my opinion some of the most interesting fractal structure is difficult to get from this visualization,
 # so we're going to look for a way to see it better in all its glory.
 #
+# But before making things more complicated, let's briefly pause and simplify.
+# By looking at this Hilbert curve data
+# in the `A` matrix in its rawest form,
+# maybe we can build some intuition for how this thing behaves.
+# By construction, the array `A` has values in the interval <!--begin:mathinline-->$(0,1)$<!--end:mathinline-->,
+# but we'll be renormalizing the values, and the reason for that should be clear momentarily.
+# We'll also recreate a coarser version of the data by doing much fewer iterations so we can comfortably look at all of the values.
+
+bits = 3
+A = hilbert_data(bits)
+A *= 2**(2*bits)
+A -= 0.5
+display(A[::-1])  # reverse the rows to align with the image
+
+
+# Starting with 0 in the bottom left corner, we have all the numbers 0, 1, ..., 63, and
+# we can always get from one number to the next by going one step up, down, left, or right.
+# So it really is a single continuous path that seems to fill up a whole square, hence the term "space-filling."
+# With the help of Matplotlib, we can even see that path directly:
+
+# +
+# This may already be in NumPy, but I can't seem to find it.
+def argsort_nd(A):
+    """
+    Return a tuple of index arrays
+        (idx[0], ..., idx[n-1])
+    such that A[idx[0], ..., idx[n-1]]
+    sorts the values of A, where n = A.ndim.
+    Each array idx[k] has length equal to A.size.
+    """
+    idx_flat = np.argsort(A.flatten())
+    idx = [0]*A.ndim
+    for dim in range(A.ndim - 1, -1, -1):
+        m = A.shape[dim]
+        idx[dim] = (idx_flat % m)
+        idx_flat //= m
+    return tuple(idx)
+
+def visualize_path(bits):
+    n = 2**bits
+    A = hilbert_data(bits)
+    y, x = argsort_nd(A)
+    plt.plot(x, y)
+    plt.axis('equal')
+    plt.axis('off')
+
+visualize_path(bits=3)
+plt.show()
+# -
+
+# And if we do one more iteration, we can see more of the recursive fractal structure emerge:
+
+visualize_path(bits=4)
+plt.show()
+
+# To make this even clearer, we can put levels 1-4 next to each other,
+# so we can see how each subsequent iteration level includes four copies of the previous level.
+
+for bits in range(1, 5):
+    plt.subplot(2, 2, bits)
+    visualize_path(bits)
+    plt.title(f"level {bits}")
+plt.show()
+
+# To see this same type of structure in the original plasma-colormapped image, we need to start at the darkest color
+# in the lower left corner and try to follow a path that makes the colors change as continuously as possible
+# while traversing over the whole square.
+# To my eye, in the original image, I can only really see it up to approximately this four-iteration level of detail
+# we just got in the last figures above, which is a shame because the original image used nine iterations and thus
+# technically should have much finer detail than this.
+# Our next task will thus be to see if we can bring out a little bit more of this fractal structure
+# without throwing out the whole colormap concept.
+
 # ## Edge Enhancement
 #
 # We can try to get a better look at the fractal structure by enhancing color discontinuities.
-# Here's the motivation: you may notice that the color of the image above changes abruptly
+# Here's the motivation: you may notice that the color changes abruptly
 # across certain horizontal and vertical lines.
 # Those lines have an interesting branching structure, but as they get smaller, the color
 # changes also get smaller.
@@ -146,6 +230,8 @@ def edge_filter(n):
     A[n, n] += 1
     return A
 
+bits = 9
+A = hilbert_data(bits)
 e = scipy.signal.convolve(A + 4, edge_filter(1), mode='same')
 m = -np.log(np.abs(e))
 m -= m[m.shape[0]//2, m.shape[1]//2]
@@ -155,11 +241,11 @@ mask = np.clip(m, 0, 1)
 # -
 
 # Now we have a mask we can multiply over the image to darken the places where the color changes abruptly.
-# We applied a log-scale transformation to further enhance the smallest details.
-# We also normalized the values so that:
+# We applied a log-scale transformation to further enhance the smallest details, and
+# we also normalized the mask values so that:
 #
 # - the obvious discontinuity right in the middle gets the maximum penalty, and
-# - the smoothest 25% of pixels are deemed "non-edges" and won't be penalized.
+# - the smoothest 25% of pixels are deemed "non-edges" and won't be darkened at all.
 #
 # Here's the result.
 
@@ -178,8 +264,8 @@ show(B)
 # It would be easier to see the path of the space-filling curve across the square if we could see where it was turning, right?
 # To do that, we'll need to sacrifice some of the finest details in the masked image, but we'll try to make it worth the trade.
 # We'll do it by applying a corner-rounding morphology operation.
-# The technical name for it is _closing_, but I'll call it something else because in my opinion the terms _opening_ and _closing_ are too
-# ambiguous and context-dependent.
+# The technical name for it is _closing_, but I'll call it something else because in my opinion the terms _opening_ and _closing_
+# from image morphology are too ambiguous and context-dependent.
 # So I'll call it "maxmin" because it has the form <!--begin:mathinline-->$\operatorname{max}(\operatorname{min}(\ldots))$<!--end:mathinline-->.
 # To make the effect less abrupt, we'll apply several different corner radii and average over all the results.
 
@@ -202,6 +288,11 @@ def circular_stencil(n):
     return x*x + y*y <= 1
 
 def round_corners(mask, roundness):
+    """
+    Compute a new mask with internal corners rounded off.
+    The nonnegative integer `roundness` value controls how much rounding is done,
+    with 0 meaning none.
+    """
     masks = [mask]
     for n in range(1, roundness + 1):
         masks.append(maxmin_filter(mask, circular_stencil(n)))
@@ -222,6 +313,11 @@ show(B)
 
 # +
 def get_edge_mask(A, roundness):
+    """
+    Compute a mask to darken edge discontinuities.
+    Internal corners will be rounded according to the nonnegative integer
+    `roundness` value, with 0 meaning none.
+    """
     e = scipy.signal.convolve(A + 4, edge_filter(1), mode='same')
     m = -np.log(np.abs(e))
     m -= m[m.shape[0]//2, m.shape[1]//2]
@@ -231,6 +327,11 @@ def get_edge_mask(A, roundness):
     return mask
 
 def apply_edge_mask(A, mask):
+    """
+    Darken or lighten image values according to the mask. Mask values should
+    be nonnegative, with values less than 1 darkening and values greater than 1
+    lightening.
+    """
     v1 = mask.max() + 1.0
     mask0 = mask <= 1
     mask1 = mask0 ^ True
@@ -327,7 +428,7 @@ def pad_image(A, dim=(460, 460), r=10, s=(-3, 3)):
     B = np.zeros((dim[0], dim[1], 4))
     B[offset0:offset0 + size0, offset1:offset1 + size1] = A
 
-    # Here's the black border and shadow. distance_transforme_edt is a
+    # Here's the black border and shadow. distance_transform_edt is a
     # little bit too much machinery for what we're doing here, but we
     # already have the dependency and it's a one-liner, so...
     bg = np.ones(B.shape[:2])
@@ -348,7 +449,7 @@ show(D)
 # ## Creating Image Files
 #
 # It's time for this experiment to leave our little sandbox, which means we'll want image files we can send around and upload.
-# The `Pillow` package makes this pretty convenient.
+# The Pillow package makes this pretty convenient.
 
 # +
 import os
@@ -370,6 +471,6 @@ save(D, 'build/avatar.png')   # for GitHub
 # scientific programming community has done some great work in creating
 # colormaps that are both visually appealing and avoid distortion as
 # perceived visually by humans, and both of those qualities are valuable
-# here. Matplotlib's excellent `plasma` colormap, which is the one I've selected here,
+# here. Matplotlib's excellent `plasma` colormap, which we've been using here,
 # was created by [St&eacute;fan van der Walt and Nathaniel
 # Smith](https://bids.github.io/colormap/).
