@@ -7,3 +7,6 @@ url: https://www.darshsrad.com
 markdown: kramdown
 kramdown:
   math_engine: katex
+
+include:
+  - generated
