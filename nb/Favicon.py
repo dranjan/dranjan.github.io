@@ -472,7 +472,7 @@ save(hilbert_rgba_final, 'build/avatar.png')   # for GitHub
 # A lot of heavy lifting is being done by the colormap. The
 # scientific programming community has done some great work in creating
 # colormaps that are both visually appealing and avoid distortion as
-# perceived visually by humans, and both of those qualities are valuable
+# perceived by humans, and both of those qualities are valuable
 # here. Matplotlib's excellent `plasma` colormap, which we've been using here,
 # was created by [St&eacute;fan van der Walt and Nathaniel
 # Smith](https://bids.github.io/colormap/).
