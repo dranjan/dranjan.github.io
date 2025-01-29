@@ -2,6 +2,8 @@
 # jupyter:
 #   jekyll:
 #     katex: true
+#     title: "About the Favicon"
+#     parent: "Mathematical Art"
 #   jupytext:
 #     formats: ipynb,py:light
 #     notebook_metadata_filter: jekyll
