@@ -6,5 +6,15 @@ set -euxo pipefail
 #   jekyllnb, lxml[html_clean]
 
 jupytext --to notebook --execute Favicon.py
-jupyter jekyllnb --site-dir tmp Favicon.ipynb
-sed -i 's/<!--begin:mathinline-->\$/\$\$/g; s/\$<!--end:mathinline-->/\$\$/g' tmp/Favicon.md
+jupyter jekyllnb --site-dir build/site --page-dir generated --image-dir assets Favicon.ipynb
+sed -i 's/<!--begin:mathinline-->\$/\$\$/g; s/\$<!--end:mathinline-->/\$\$/g' build/site/generated/Favicon.md
+tar czvf build/site.tar.gz -C build/site .
+
+set +x
+
+echo "###"
+echo "### To finish, run:"
+echo "###"
+echo "###    tar xzvf build/site.tar.gz -C \${jekyll_site_root}"
+echo "###"
+echo "### but make sure your tree is clean first, since files may be overwritten."
