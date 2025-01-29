@@ -11,13 +11,17 @@
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
+#   jekyll:
+#     katex: True
 # ---
 
 # # About the Favicon
+# ***Or: Visualizing Hilbert Curves in Python***
 #
 # If you've spent some time on my website...firstly, thank you! Secondly, you may have noticed a colorful little square icon in the browser tab.
 # When I first started this site, I was missing an icon, so naturally I set about making one for myself.
-# What then began as some throwaway code to generate a tiny image soon became its own project and ultimately turned into something I'm kind of proud of, so I'm going to explain what it is and how I made it.
+# What then began as some throwaway code to generate a tiny image soon became its own project and ultimately turned into something I'm pretty happy with,
+# so I'm going to explain what it is and how I made it.
 #
 # ## The Hilbert Curve
 #
@@ -27,7 +31,9 @@
 # As far as fractals go, the Hilbert Curve is a true classic, dating back to 1891 when it was first discovered by the legendary mathematician David Hilbert.
 # It belongs to a class of fractals called _space-filling curves_.
 # Nowadays we know of countless examples of space-filling curves, but Hilbert's is still remarkable in its simplicity.
-# It can be defined as the unique continuous function $H:[0,1]\to[0,1]\times[0,1]$ satisfying the functional equation
+# It can be defined as the unique continuous function <!--begin:mathinline-->$H:[0,1]\to[0,1]\times[0,1]$<!--end:mathinline-->
+# satisfying the functional equation
+#
 # $$
 # \begin{align*}
 # H(x) &= (f(x), g(x)) = \frac12\cdot
@@ -41,19 +47,37 @@
 # H(1) &= (1, 0).
 # \end{align*}
 # $$
+#
 # As for implementation, we can pretty much use exactly that, although technically what we compute is
 # more like the inverse of that mapping.
+# (Computing the inverse is straightforward, since each of the four cases in the recursive part of the functional equation
+# maps one of the four quarters of the unit interval onto one of the four quadrants of the unit square.)
 #
-# Here's the game plan: first we'll pick a nice colormap for the input interval $[0, 1]$, and then we'll
-# apply the $H$ function above to transfer the colors onto the square.
-# Technically this isn't a well defined result since $H$ isn't a one-to-one function, but
+# Here's the game plan: first we'll pick a nice colormap for the input interval <!--begin:mathinline-->$[0, 1]$<!--end:mathinline-->, and then we'll
+# apply the <!--begin:mathinline-->$H$<!--end:mathinline--> function above to transfer the colors onto the square.
+# Technically this isn't a well defined result since <!--begin:mathinline-->$H$<!--end:mathinline--> isn't a one-to-one function, but
 # it is approximated arbitrarily well by one-to-one functions, so it's fine in practice.
 # We can construct these one-to-one approximations just by iterating the functional equation
 # a finite number of times.
 # By choosing a power-of-two grid for the square, we can additionally ensure that these
 # approximations touch each pixel exactly once, so it's kind of perfect.
 #
-# This is the whole implementation:
+# If you want to follow along with my implementation, you'll need a way to visualize raw RGBA data.
+# I suggest using a [Jupyter](https://jupyter.org/) notebook, in which case we can do it conveniently like this:
+
+# +
+import io
+import IPython.display
+
+def show(rgba):
+    stream = io.BytesIO()
+    plt.imsave(stream, rgba, origin='lower', format='png')
+    display(IPython.display.Image(stream.getvalue()))
+
+
+# -
+
+# All right! And now the implementation:
 
 # +
 import matplotlib.pyplot as plt
@@ -64,9 +88,9 @@ A = np.array([[0.5]])
 for _ in range(bits):
     A = np.block([[A.T, A.T[::-1, ::-1] + 3], [A + 1, A + 2]])/4
 
-plt.imshow(A, origin='lower', cmap='plasma')
-plt.axis('off')
-plt.show()
+cmap = plt.get_cmap('plasma')
+B = cmap(A)
+show(B)
 # -
 
 # That's it! We can stop here, and just for the website favicon, there's arguably no reason to go any further.
@@ -137,26 +161,13 @@ mask = np.clip(m, 0, 1)
 # - the obvious discontinuity right in the middle gets the maximum penalty, and
 # - the smoothest 25% of pixels are deemed "non-edges" and won't be penalized.
 #
-# Here's the result. Also from now on, as a small technicality, we're going to look at the image in its natural resolution
-# using the `IPython.display` module instead of `imshow` for maximum fidelity.
+# Here's the result.
 
-# +
 cmap = plt.get_cmap('plasma')
 B = cmap(A)
 B[..., :3] *= mask[..., None]
+show(B)
 
-import io
-import IPython.display
-
-def embed(data):
-    stream = io.BytesIO()
-    plt.imsave(stream, data, origin='lower', format='png')
-    display(IPython.display.Image(stream.getvalue()))
-
-embed(B)
-
-
-# -
 
 # Now we can really see the structure, but it's got the opposite problem:
 # there's so much detail that it's hard for the eye to follow.
@@ -169,7 +180,7 @@ embed(B)
 # We'll do it by applying a corner-rounding morphology operation.
 # The technical name for it is _closing_, but I'll call it something else because in my opinion the terms _opening_ and _closing_ are too
 # ambiguous and context-dependent.
-# So I'll call it "maxmin" because it has the form $\operatorname{max}(\operatorname{min}(\ldots))$.
+# So I'll call it "maxmin" because it has the form <!--begin:mathinline-->$\operatorname{max}(\operatorname{min}(\ldots))$<!--end:mathinline-->.
 # To make the effect less abrupt, we'll apply several different corner radii and average over all the results.
 
 # +
@@ -200,7 +211,7 @@ roundness = 10
 mask = round_corners(mask, roundness)
 B = cmap(A)
 B[..., :3] *= mask[..., None]
-embed(B)
+show(B)
 
 
 # -
@@ -230,17 +241,18 @@ def apply_edge_mask(A, mask):
     return B
 
 B = apply_edge_mask(A, get_edge_mask(A, roundness=10))
-embed(B)
+show(B)
 # -
 
 # I think that strikes a pretty good compromise between our criteria.
-# We can see a lot of small details, but it's still possible to follow the path from the blue parts through
+# We can see a lot of small details, and it's possible to visually follow the path from the blue parts through
 # purple, pink, orange, and finally yellow.
+# Also, it isn't too bright or dark.
 #
 # If it's still hard to see the larger-scale structure, simply increasing the `roundness` value works pretty well,
 # but it does increase the computation time a bit, and of course we lose even more detail:
 
-embed(apply_edge_mask(A, get_edge_mask(A, roundness=25)))
+show(apply_edge_mask(A, get_edge_mask(A, roundness=25)))
 
 
 # ## Resharpening
@@ -274,7 +286,7 @@ def shrink_image(A):
     return B.mean(axis=(1, 3))
 
 C = shrink_image(B)
-embed(C)
+show(C)
 # -
 
 # This is it, for the most part. We'll go into some more minor technicalities below,
@@ -289,7 +301,7 @@ embed(C)
 #
 # Now, the image we just created is 257 pixels by 257 pixels:
 
-display(C.shape)
+C.shape
 
 
 # Some quick math shows that a circle inscribed in a square of dimensions 460 pixels can contain the entire square of dimensions 257 pixels,
@@ -330,7 +342,26 @@ def pad_image(A, dim=(460, 460), r=10, s=(-3, 3)):
     return B
 
 D = pad_image(C)
-embed(D)
+show(D)
+# -
+
+# ## Creating Image Files
+#
+# It's time for this experiment to leave our little sandbox, which means we'll want image files we can send around and upload.
+# The `Pillow` package makes this pretty convenient.
+
+# +
+import os
+import PIL
+
+def save(rgba, filename):
+    image = PIL.Image.fromarray((rgba[::-1]*255).astype(np.uint8))
+    image.save(filename)
+
+os.makedirs('build', exist_ok=True)
+save(C, 'build/favicon.ico')  # Icon format, for the website
+save(C, 'build/hilbert.png')  # PNG format, for general use
+save(D, 'build/avatar.png')   # for GitHub
 # -
 
 # ## Acknowledgements
