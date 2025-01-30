@@ -428,7 +428,7 @@ show(hilbert_rgba)
 #
 # The image we just created is 257 pixels by 257 pixels:
 
-hilbert_rgba.shape
+print(hilbert_rgba.shape)
 
 
 # Some quick math shows that a circle inscribed in a square of dimensions 460 pixels can contain the entire square of dimensions 257 pixels,
