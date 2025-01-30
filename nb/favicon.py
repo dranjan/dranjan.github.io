@@ -160,7 +160,6 @@ print(data[::-1])  # reverse the rows to align with the image
 
 # +
 def plot_path(bits):
-    n = 2**bits
     hilbert_values = compute_hilbert(bits)
     idx = np.argsort(hilbert_values, axis=None)
     y, x = np.unravel_index(idx, hilbert_values.shape)
