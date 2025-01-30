@@ -10,7 +10,7 @@ parent: Mathematical Art
 # About the Favicon
 {: .no_toc }
 
-***Or: Visualizing Hilbert Curves in Python***
+***or, Visualizing Hilbert Curves in Python***
 
 - TOC
 {:toc}
@@ -35,12 +35,12 @@ satisfying the functional equation
 
 $$
 \begin{align*}
-H(v) &= (f(v), g(v)) = \frac12\cdot
+H(v) &= \big(f(v), g(v)\big) = \frac12\cdot
 \begin{cases}
-(g(4v), f(4v)) &\text{if } 0\leq v \leq\tfrac14, \\
-(f(4v-1), 1+g(4v-1)) &\text{if } \tfrac14 \leq v \leq \tfrac12, \\
-(1+f(4v-2), 1+g(4v-2)) &\text{if } \tfrac12 \leq v \leq \tfrac34, \\
-(2-g(4v-3), 1-f(4v-3)) &\text{if } \tfrac34 \leq v \leq 1,
+\big(g(4v), f(4v)\big) &\text{if } 0\leq v \leq\tfrac14, \\
+\big(f(4v-1), 1+g(4v-1)\big) &\text{if } \tfrac14 \leq v \leq \tfrac12, \\
+\big(1+f(4v-2), 1+g(4v-2)\big) &\text{if } \tfrac12 \leq v \leq \tfrac34, \\
+\big(2-g(4v-3), 1-f(4v-3)\big) &\text{if } \tfrac34 \leq v \leq 1,
 \end{cases} \\
 H(0) &= (0, 0), \\
 H(1) &= (1, 0).
@@ -119,7 +119,7 @@ hilbert_rgba = cmap(hilbert_values)
 show(hilbert_rgba)
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_3_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_3_0.png){: .center-image }
 
 That's it! We can stop here, and just for the website favicon, there's
 arguably no reason to keep working on it.
@@ -159,7 +159,6 @@ With the help of Matplotlib, we can even look at that path directly:
 
 ```python
 def plot_path(bits):
-    n = 2**bits
     hilbert_values = compute_hilbert(bits)
     idx = np.argsort(hilbert_values, axis=None)
     y, x = np.unravel_index(idx, hilbert_values.shape)
@@ -171,7 +170,7 @@ plot_path(bits=3)
 plt.show()
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_7_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_7_0.png){: .center-image }
 
 And if we do one more iteration, we can see more of the recursive fractal structure emerge:
 
@@ -180,7 +179,7 @@ plot_path(bits=4)
 plt.show()
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_9_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_9_0.png){: .center-image }
 
 To make this even clearer, we can put levels 1-4 next to each other,
 so we can see how each subsequent iteration level connects together four small copies of the previous level.
@@ -193,7 +192,7 @@ for bits in range(1, 5):
 plt.show()
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_11_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_11_0.png){: .center-image }
 
 To see this same type of structure in the original plasma-colormapped image, we need to start at the darkest color
 in the lower left corner and try to trace out a path that makes the colors change as continuously as possible
@@ -204,7 +203,7 @@ Let's repeat the original image here for easy reference:
 show(hilbert_rgba)
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_13_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_13_0.png){: .center-image }
 
 On my computer monitor, my eyes can _maybe_ discern detail up to about level four here,
 or even just three to be conservative.
@@ -284,7 +283,7 @@ hilbert_rgba[..., :3] *= mask[..., None]
 show(hilbert_rgba)
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_18_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_18_0.png){: .center-image }
 
 Now we can really see the structure, but it's got the opposite problem:
 there's so much detail that it's hard for the eye to follow.
@@ -335,7 +334,7 @@ hilbert_rgba[..., :3] *= mask[..., None]
 show(hilbert_rgba)
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_20_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_20_0.png){: .center-image }
 
 It seems to have done the right thing, but it's pretty clear that our
 mask normalization is no longer correct.
@@ -380,7 +379,7 @@ hilbert_rgba = apply_mask(hilbert_rgba_raw, mask)
 show(hilbert_rgba)
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_22_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_22_0.png){: .center-image }
 
 I think that strikes a pretty good compromise between our criteria.
 We lost some detail, but there's still plenty,
@@ -395,7 +394,7 @@ but it does increase the computation time a bit, and of course we lose even more
 show(apply_mask(hilbert_rgba_raw, get_edge_mask(hilbert_values, roundness=15)))
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_24_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_24_0.png){: .center-image }
 
 ## Resharpening
 
@@ -437,7 +436,7 @@ hilbert_rgba = shrink_image(hilbert_rgba)
 show(hilbert_rgba)
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_26_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_26_0.png){: .center-image }
 
 This is it, for the most part. We'll go into some more minor technicalities below,
 but they won't change this final result of the computation.
@@ -452,15 +451,10 @@ Third, the background the avatar is shown on doesn't have a fixed color and depe
 The image we just created is 257 pixels by 257 pixels:
 
 ```python
-hilbert_rgba.shape
+print(hilbert_rgba.shape)
 ```
 
-
-
-
     (257, 257, 4)
-
-
 
 Some quick math shows that a circle inscribed in a square of dimensions 460 pixels can contain the entire square of dimensions 257 pixels,
 with plenty of room to spare.
@@ -505,11 +499,11 @@ hilbert_rgba_final = pad_image(hilbert_rgba)
 show(hilbert_rgba_final)
 ```
 
-![png]({{ site.baseurl }}/assets/favicon/favicon_31_0.png){: .center-image }
+![png]({{ site.baseurl }}/assets/generated/favicon/favicon_31_0.png){: .center-image }
 
 ## Creating Image Files
 
-It's time for this experiment to leave our little sandbox, which means
+Finally,
 we'll want image files we can send around and upload. The Pillow
 package makes this simple.
 
