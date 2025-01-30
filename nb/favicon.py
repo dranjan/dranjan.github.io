@@ -5,6 +5,7 @@
 #     page_toc: true
 #     parent: Mathematical Art
 #     title: About the Favicon
+#     permalink: favicon.html
 #   jupytext:
 #     formats: ipynb,py:light
 #     notebook_metadata_filter: jekyll

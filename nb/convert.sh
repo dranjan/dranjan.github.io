@@ -5,9 +5,9 @@ set -euxo pipefail
 # Python Requirements: jupyterlab, jupytext, numpy, PIL, scipy, matplotlib,
 #   jekyllnb, lxml[html_clean]
 
-jupytext --to notebook --execute Favicon.py
-jupyter jekyllnb --site-dir build/site --page-dir generated --image-dir assets Favicon.ipynb
-sed -f fix-md.sed -i build/site/generated/Favicon.md
+jupytext --to notebook --execute favicon.py
+jupyter jekyllnb --site-dir build/site --page-dir generated --image-dir assets favicon.ipynb
+sed -f fix-md.sed -i build/site/generated/favicon.md
 tar czvf build/site.tar.gz -C build/site .
 
 set +x
