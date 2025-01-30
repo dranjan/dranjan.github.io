@@ -22,7 +22,7 @@
 
 # # About the Favicon <!--insert:no-toc-->
 #
-# ***Or: Visualizing Hilbert Curves in Python***
+# ***or, Visualizing Hilbert Curves in Python***
 #
 # <!--insert:toc-->
 #
