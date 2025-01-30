@@ -3,8 +3,8 @@
 #   jekyll:
 #     katex: true
 #     page_toc: true
-#     title: "About the Favicon"
-#     parent: "Mathematical Art"
+#     parent: Mathematical Art
+#     title: About the Favicon
 #   jupytext:
 #     formats: ipynb,py:light
 #     notebook_metadata_filter: jekyll
@@ -34,8 +34,10 @@
 #
 # It's a Hilbert curve.
 #
-# You may have noticed from the rest of my site that I'm kind of a fan of fractals.
-# As far as fractals go, the Hilbert curve is a true classic, dating back to 1891 when it was first discovered by the legendary mathematician David Hilbert.
+# Since my website has a lot of fractal-related content,
+# it made sense to use a fractal as its symbol.
+# As far as fractals go, the Hilbert curve is a true classic,
+# dating back to 1891 when it was first discovered by the legendary mathematician David Hilbert.
 # It belongs to a class of fractals called _space-filling curves_.
 # Nowadays we know of countless examples of space-filling curves, but Hilbert's is still remarkable in its simplicity.
 # It can be defined as the unique continuous function <!--begin:mathinline-->$H:[0,1]\to[0,1]\times[0,1]$<!--end:mathinline-->
@@ -55,7 +57,15 @@
 # \end{align*}
 # $$
 #
-# Here's the game plan: first we'll pick a nice colormap for the input interval <!--begin:mathinline-->$[0, 1]$<!--end:mathinline-->, and then we'll
+# It's not too hard to show that these equations define a unique continuous function <!--begin:mathinline-->$H$<!--end:mathinline-->,
+# and that this <!--begin:mathinline-->$H$<!--end:mathinline--> is actually _surjective_, i.e., maps onto the whole unit square!
+# A two dimensional shape as the image of a one-dimensional interval under a continuous function, isn't that pretty amazing?
+# I'll skip the proof here because it's too much of a digression,
+# but like I said it isn't too difficult if you're interested in trying to fill in the details,
+# after say a first undergraduate course in analysis.
+#
+# So here's the game plan for the visualization:
+# first we'll pick a nice colormap for the input interval <!--begin:mathinline-->$[0, 1]$<!--end:mathinline-->, and then we'll
 # apply this <!--begin:mathinline-->$H$<!--end:mathinline--> function to transfer the colors onto the square.
 # Here's the mathematical representation of that:
 #
@@ -67,13 +77,14 @@
 # we're trying to compute on the unit square, and <!--begin:mathinline-->$\operatorname{Colormap}$<!--end:mathinline-->
 # is our chosen colormap for the unit interval.
 # There's a slight complication here because <!--begin:mathinline-->$H$<!--end:mathinline--> isn't one-to-one,
-# so <!--begin:mathinline-->$H^{-1}$<!--end:mathinline--> isn't technically well defined,
-# but in practice this is no big deal, because <!--begin:mathinline-->$H$<!--end:mathinline-->
+# so <!--begin:mathinline-->$H^{-1}$<!--end:mathinline--> isn't
+# technically well defined.
+# However, this is no big deal in practice because <!--begin:mathinline-->$H$<!--end:mathinline-->
 # has a sequence of discrete approximations that are fully bijective,
-# which we get by iterating the functional equation a finite number of times
-# and discretizing both sides to powers of two.
+# and we get them simply by iterating the functional equation a finite number of times
+# and discretizing both sides to appropriate powers of two.
 #
-# As far as colormaps go, right now we mainly just want something that's dynamic and perceptually uniform,
+# For the colormap, right now we mainly just want something that's dynamic and perceptually uniform,
 # but later on we'll also want it to avoid becoming overly dark.
 # It seems quite difficult to achieve all of those and still maintain some semblance of aesthetics,
 # but Matplotlib's `plasma` does it pretty well in my opinion, so that's what we'll use.
@@ -99,7 +110,8 @@ def show(rgba):
 
 # -
 
-# (`matplotlib.pyplot.imshow` also works, but keep in mind that it likes to resize images, which can lead to misleading results.)
+# (`matplotlib.pyplot.imshow` also works, but keep in mind that it likes
+# to resize images, which can be misleading.)
 #
 # With that out of the way, here's the implementation of all of that math:
 
@@ -107,22 +119,24 @@ def show(rgba):
 import matplotlib.pyplot as plt
 import numpy as np
 
-def hilbert_data(bits):
+def compute_hilbert(bits):
     v = np.array([[0.5]])
     for _ in range(bits):
         v = np.block([[v.T, v.T[::-1, ::-1] + 3], [v + 1, v + 2]])/4
     return v
 
-hilbert_values = hilbert_data(bits=9)
+hilbert_values = compute_hilbert(bits=8)
 cmap = plt.get_cmap('plasma')
 hilbert_rgba = cmap(hilbert_values)
 show(hilbert_rgba)
 # -
 
-# That's it! We can stop here, and just for the website favicon, there's arguably no reason to go any further.
-# However, I'm not quite done yet.
-# I think we can't do too much better than this with the pure color mapping approach,
-# but in my opinion some of the most interesting fractal structure is difficult to get from this visualization,
+# That's it! We can stop here, and just for the website favicon, there's
+# arguably no reason to keep working on it.
+# However, we'll take it a little bit further because there's more to
+# life and math than favicons, and there's something a little bit
+# unsatisfying about what we've created here.
+# In my opinion some of the most interesting fractal structure is difficult to get from this visualization,
 # so we're going to look for a way to see it better in all its glory.
 #
 # But before making things more complicated, let's briefly pause and simplify.
@@ -133,39 +147,22 @@ show(hilbert_rgba)
 # We'll also decrease the number of iterations so we can comfortably look at all of the values.
 
 bits = 3
-data = hilbert_data(bits) * 2**(2*bits) - 0.5
-display(data[::-1])  # reverse the rows to align with the image
+data = compute_hilbert(bits) * 2**(2*bits) - 0.5
+print(data[::-1])  # reverse the rows to align with the image
 
 
-# Starting with 0 in the bottom left corner, we have all the numbers 0, 1, ..., 63, and
+# Starting with 0 in the bottom left corner, we have all the whole
+# numbers up to 63, and
 # we can always get from one number to the next by going one step up, down, left, or right.
 # So it really is a single continuous path that seems to fill up a whole square, hence the term "space-filling."
 # With the help of Matplotlib, we can even look at that path directly:
 
 # +
-# This may already be in NumPy, but I can't seem to find it.
-def argsort_nd(array):
-    """
-    Return a tuple of index arrays
-
-        (idx[0], ..., idx[n-1])
-
-    such that array[idx[0], ..., idx[n-1]]
-    sorts the values of `array`, where n = array.ndim.
-    Each array idx[k] has length equal to array.size.
-    """
-    idx_flat = np.argsort(array, axis=None)
-    idx = [0]*array.ndim
-    for dim in range(array.ndim - 1, -1, -1):
-        m = array.shape[dim]
-        idx[dim] = (idx_flat % m)
-        idx_flat //= m
-    return tuple(idx)
-
 def plot_path(bits):
     n = 2**bits
-    hilbert_values = hilbert_data(bits)
-    y, x = argsort_nd(hilbert_values)
+    hilbert_values = compute_hilbert(bits)
+    idx = np.argsort(hilbert_values, axis=None)
+    y, x = np.unravel_index(idx, hilbert_values.shape)
     plt.plot(x, y)
     plt.axis('equal')
     plt.axis('off')
@@ -193,15 +190,25 @@ plt.show()
 # while traversing over the whole square.
 # Let's repeat the original image here for easy reference:
 
-hilbert_values = hilbert_data(bits=9)
-hilbert_rgba = cmap(hilbert_values)
 show(hilbert_rgba)
 
-# On my computer monitor, my eyes can only discern detail up to about level four here,
-# which is a shame because the image uses nine iterations and thus
+# On my computer monitor, my eyes can _maybe_ discern detail up to about level four here,
+# or even just three to be conservative.
+# That's a shame because the image uses eight iterations and thus
 # technically should have much finer detail than that.
-# Our next task will thus be to see if we can bring out a little bit more of the fractal structure
-# without throwing out the whole colormap concept.
+# However, there are some pretty fundamental limitations here.
+# For one, the `plasma` colormap is implemented as a list of 256 different colors,
+# and even with interpolation, there's a limit to how many different colormap colors
+# the color space can computationally represent.
+# Second, there are the challenges of human perception.
+# If we want to be able to see a continuous path through the colors,
+# we should be able to see all the color discontinuities,
+# but the smaller discontinuities have really small color jumps,
+# and that's just fundamentally hard to see.
+#
+# Therefore, while I think the color mapping idea clearly has some value,
+# it looks like it's going to need some help if we really want to see a detailed Hilbert curve.
+# That's what we'll explore next.
 
 # ## Edge Enhancement
 #
@@ -214,14 +221,10 @@ show(hilbert_rgba)
 #
 # We'll do this by applying a _discrete Laplacian_ operator,
 # which finds pixels whose values differ significantly from averages over small neighborhoods.
-# That will give each pixel a "score" of how important of an edge it appears to be on,
+# That will give each pixel a "score" of how important of an edge
+# discontinuity it appears to be on,
 # and we can then use those scores to darken the corresponding pixels, i.e., shunt them into the
 # visual background.
-#
-# I didn't try too hard to optimize the filter coefficients defined below,
-# but the most important thing is for it to use a very small neighborhood to average over.
-# We're interested in very small details, and larger neighborhoods would average
-# those details out, which would be bad.
 
 # +
 import scipy
@@ -231,6 +234,8 @@ def edge_filter(n):
     Return a simple edge detection filter.
     The result will be square with 2*n + 1 elements on each side.
     """
+    # I didn't think too hard about these coefficients. In practice we
+    # use a tiny neighborhood size anyway, so it doesn't matter too much.
     x = np.r_[-n:n+1]
     coefficients = np.maximum(0, n + 1 - np.hypot(x, x[:, None]))
     coefficients /= -coefficients.sum()
@@ -258,6 +263,9 @@ mask = np.clip(mask, 0, 1)
 #
 # Here's the result.
 
+
+# hilbert_rgba[..., 3] is the alpha channel, and we don't want to touch
+# that just yet.
 hilbert_rgba[..., :3] *= mask[..., None]
 show(hilbert_rgba)
 
@@ -305,8 +313,7 @@ def round_corners(mask, roundness):
         masks.append(maxmin_filter(mask, circular_stencil(n)))
     return np.mean(masks, axis=0)
 
-roundness = 10
-mask = round_corners(mask, roundness)
+mask = round_corners(mask, roundness=5)
 hilbert_rgba = cmap(hilbert_values)
 hilbert_rgba[..., :3] *= mask[..., None]
 show(hilbert_rgba)
@@ -314,7 +321,8 @@ show(hilbert_rgba)
 
 # -
 
-# It seems to have done the right thing, but it's pretty clear that our normalization is no longer correct.
+# It seems to have done the right thing, but it's pretty clear that our
+# mask normalization is no longer correct.
 # To fix that, let's move some of the normalization to after the corner rounding, and let's also add the possibility of
 # brightening the top few percent of mask values, to partially compensate for the fact that we're generally making everything darker.
 
@@ -339,6 +347,8 @@ def apply_mask(rgba, mask):
     be nonnegative, with values less than 1 darkening and values greater than 1
     lightening.
     """
+    # The `+ 1.0` fudge factor prevents too much lightening.
+    # We're trying to get a subtle effect.
     v1 = mask.max() + 1.0
     mask0 = mask <= 1
     mask1 = mask0 ^ True
@@ -349,37 +359,41 @@ def apply_mask(rgba, mask):
     return rgba
 
 hilbert_rgba_raw = cmap(hilbert_values)
-mask = get_edge_mask(hilbert_values, roundness=10)
+mask = get_edge_mask(hilbert_values, roundness=5)
 hilbert_rgba = apply_mask(hilbert_rgba_raw, mask)
 show(hilbert_rgba)
 # -
 
 # I think that strikes a pretty good compromise between our criteria.
-# We can see a lot of small details, and it's possible to visually follow the path from the blue parts through
-# purple, pink, orange, and finally yellow.
+# We lost some detail, but there's still plenty,
+# and it's possible to visually follow the colors around the square
+# from the blue parts through purple, pink, orange, and finally yellow.
 # Also, it isn't too bright or dark.
 #
 # If it's still hard to see the larger-scale structure, simply increasing the `roundness` value works pretty well,
 # but it does increase the computation time a bit, and of course we lose even more detail:
 
-show(apply_mask(hilbert_rgba_raw, get_edge_mask(hilbert_values, roundness=25)))
+show(apply_mask(hilbert_rgba_raw, get_edge_mask(hilbert_values, roundness=15)))
 
 
 # ## Resharpening
 #
 # You might notice that the dark edges in the image are all two pixels wide, which seems really unnecessary in my opinion.
+# To make these edges, we had to sacrifice some valuable plasma-color pixels,
+# and it would be nice to have the edges be just one pixel wide so we could keep more of the colorful parts.
+#
 # The edge width is a feature of the edge detection filter we applied, and it's kind of impossible for it to do better than two pixels,
 # since every edge will be detected from both sides.
 # That's fine, though: since we can choose our resolution (as long as it's a power of two),
 # we can just render the image at double the resolution we actually want, and then shrink it by a factor of two!
-# Then our two-pixel edges should shrink down to just one pixel.
+# Then our two-pixel-wide edges should shrink down to just one pixel.
 # However, we need to be careful here: the middle of every edge is always an even number of pixels from the image boundaries.
 # That means if we average over two-by-two blocks to shrink the image, the edges will actually fall _between_ the blocks
 # and won't be shrunk down at all!
 # We can avoid that just by adding a one-pixel boundary to the image.
 #
-# I also owe you a small confession now: we've _already_ rendered at twice the resolution I actually want,
-# so let's just continue on.
+# (Since we're doing most of the computation at a higher resolution now, for consistency we'll also increase the `roundness` value below,
+# since its units are absolute pixels.)
 
 # +
 def shrink_image(rgba):
@@ -394,8 +408,12 @@ def shrink_image(rgba):
     rgba_padded[1:-1, 1:-1, :] = rgba
     return rgba_padded.reshape(s0//2 + 1, 2,  s1//2 + 1, 2, 4).mean(axis=(1, 3))
 
-hilbert_rgba_small = shrink_image(hilbert_rgba)
-show(hilbert_rgba_small)
+hilbert_values = compute_hilbert(bits=9)
+hilbert_rgba = cmap(hilbert_values)
+mask = get_edge_mask(hilbert_values, roundness=10)
+hilbert_rgba = apply_mask(hilbert_rgba, mask)
+hilbert_rgba = shrink_image(hilbert_rgba)
+show(hilbert_rgba)
 # -
 
 # This is it, for the most part. We'll go into some more minor technicalities below,
@@ -410,19 +428,19 @@ show(hilbert_rgba_small)
 #
 # The image we just created is 257 pixels by 257 pixels:
 
-hilbert_rgba_small.shape
+hilbert_rgba.shape
 
 
 # Some quick math shows that a circle inscribed in a square of dimensions 460 pixels can contain the entire square of dimensions 257 pixels,
 # with plenty of room to spare.
-# Without going into a massive rant about GitHub's circular avatars,
+# Without going into a massive rant about GitHub's avatar shape,
 # what made sense to me was to add a dark border that fades out into transparency.
 # We can also offset the border to make it look like a shadow, which looks kind of cool.
 #
 # Here's the code for that, and the final result.
 
 # +
-def pad_image(rgba, dim=(460, 460), r=10, s=(-3, 3)):
+def pad_image(rgba, dim=(460, 460), border_size=10, border_shift=(-3, 3)):
     """
     Add a transparent border to the given image, padding it to the specified
     dimensions. The input image will be centered in the result.
@@ -431,6 +449,8 @@ def pad_image(rgba, dim=(460, 460), r=10, s=(-3, 3)):
     can also be applied to add the illusion of depth.
     """
     size0, size1 = rgba.shape[:2]
+    if size0 > dim[0] or size1 > dim[1]:
+        raise RuntimeError("image doesn't fit")
     offset0 = (dim[0] - size0)//2
     offset1 = (dim[1] - size1)//2
     rgba_padded = np.zeros((dim[0], dim[1], 4))
@@ -442,22 +462,23 @@ def pad_image(rgba, dim=(460, 460), r=10, s=(-3, 3)):
     bg = np.ones(rgba_padded.shape[:2])
     bg[offset0:offset0 + size0, offset1:offset1 + size1] = 0
     d = scipy.ndimage.distance_transform_edt(bg)
-    alpha = np.maximum(0, r - d) / r
-    alpha = np.roll(alpha, s[0], axis=0)
-    alpha = np.roll(alpha, s[1], axis=1)
+    alpha = np.maximum(0, border_size - d) / border_size
+    alpha = np.roll(alpha, border_shift[0], axis=0)
+    alpha = np.roll(alpha, border_shift[1], axis=1)
 
     rgba_padded[..., 3] = np.maximum(rgba_padded[..., 3], alpha)
 
     return rgba_padded
 
-hilbert_rgba_final = pad_image(hilbert_rgba_small)
+hilbert_rgba_final = pad_image(hilbert_rgba)
 show(hilbert_rgba_final)
 # -
 
 # ## Creating Image Files
 #
-# It's time for this experiment to leave our little sandbox, which means we'll want image files we can send around and upload.
-# The Pillow package makes this pretty convenient.
+# It's time for this experiment to leave our little sandbox, which means
+# we'll want image files we can send around and upload. The Pillow
+# package makes this simple.
 
 # +
 import os
@@ -468,9 +489,9 @@ def save(rgba, filename):
     image.save(filename)
 
 os.makedirs('build', exist_ok=True)
-save(hilbert_rgba_small, 'build/favicon.ico')  # Icon format, for the website
-save(hilbert_rgba_small, 'build/hilbert.png')  # PNG format, for general use
-save(hilbert_rgba_final, 'build/avatar.png')   # for GitHub
+save(hilbert_rgba, 'build/favicon.ico')       # Icon format, for the website
+save(hilbert_rgba, 'build/hilbert.png')       # PNG format, for general use
+save(hilbert_rgba_final, 'build/avatar.png')  # for GitHub
 # -
 
 # ## Acknowledgements
