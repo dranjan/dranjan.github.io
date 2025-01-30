@@ -476,7 +476,7 @@ show(hilbert_rgba_final)
 
 # ## Creating Image Files
 #
-# It's time for this experiment to leave our little sandbox, which means
+# Finally,
 # we'll want image files we can send around and upload. The Pillow
 # package makes this simple.
 
