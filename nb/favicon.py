@@ -4,8 +4,8 @@
 #     katex: true
 #     page_toc: true
 #     parent: Mathematical Art
-#     title: About the Favicon
 #     permalink: favicon.html
+#     title: About the Favicon
 #   jupytext:
 #     formats: ipynb,py:light
 #     notebook_metadata_filter: jekyll
@@ -46,12 +46,12 @@
 #
 # $$
 # \begin{align*}
-# H(v) &= (f(v), g(v)) = \frac12\cdot
+# H(v) &= \big(f(v), g(v)\big) = \frac12\cdot
 # \begin{cases}
-# (g(4v), f(4v)) &\text{if } 0\leq v \leq\tfrac14, \\
-# (f(4v-1), 1+g(4v-1)) &\text{if } \tfrac14 \leq v \leq \tfrac12, \\
-# (1+f(4v-2), 1+g(4v-2)) &\text{if } \tfrac12 \leq v \leq \tfrac34, \\
-# (2-g(4v-3), 1-f(4v-3)) &\text{if } \tfrac34 \leq v \leq 1,
+# \big(g(4v), f(4v)\big) &\text{if } 0\leq v \leq\tfrac14, \\
+# \big(f(4v-1), 1+g(4v-1)\big) &\text{if } \tfrac14 \leq v \leq \tfrac12, \\
+# \big(1+f(4v-2), 1+g(4v-2)\big) &\text{if } \tfrac12 \leq v \leq \tfrac34, \\
+# \big(2-g(4v-3), 1-f(4v-3)\big) &\text{if } \tfrac34 \leq v \leq 1,
 # \end{cases} \\
 # H(0) &= (0, 0), \\
 # H(1) &= (1, 0).
