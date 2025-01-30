@@ -1,6 +1,8 @@
 ---
 title: Mathematical Art
 layout: default
+has_children: true
+has_toc: false
 ---
 
 # Super-Apollonian Fractal
@@ -43,3 +45,10 @@ maybe you can reverse-engineer my work from the image!
 [![Link to image](assets/images/pentafract-wave-center-vignette01-thumb.png)](assets/images/pentafract-wave-center-vignette01.png)
 
 This is a quasi-periodic fractal made from wave interference patterns.
+
+# Site Favicon
+
+[![Link to main article](favicon.ico){:width="128px" :height="128"}](favicon.html)
+
+This is a colormapped Hilbert curve, which is a well known space-filling fractal curve.
+The image links to the main article.
