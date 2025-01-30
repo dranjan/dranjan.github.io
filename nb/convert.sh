@@ -7,7 +7,7 @@ set -euxo pipefail
 
 jupytext --to notebook --execute Favicon.py
 jupyter jekyllnb --site-dir build/site --page-dir generated --image-dir assets Favicon.ipynb
-sed -i 's/<!--begin:mathinline-->\$/\$\$/g; s/\$<!--end:mathinline-->/\$\$/g' build/site/generated/Favicon.md
+sed -f fix-md.sed -i build/site/generated/Favicon.md
 tar czvf build/site.tar.gz -C build/site .
 
 set +x

@@ -2,6 +2,7 @@
 # jupyter:
 #   jekyll:
 #     katex: true
+#     page_toc: true
 #     title: "About the Favicon"
 #     parent: "Mathematical Art"
 #   jupytext:
@@ -18,8 +19,11 @@
 #     name: python3
 # ---
 
-# # About the Favicon
+# # About the Favicon <!--insert:no-toc-->
+#
 # ***Or: Visualizing Hilbert Curves in Python***
+#
+# <!--insert:toc-->
 #
 # If you've spent some time on my website...firstly, thank you! Secondly, you may have noticed a colorful little square icon in the browser tab.
 # When I first started this site, I was missing an icon, so naturally I set about making one for myself.
