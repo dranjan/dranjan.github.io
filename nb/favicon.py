@@ -28,7 +28,7 @@
 #
 # If you've spent some time on my website...firstly, thank you! Secondly, you may have noticed a colorful little square icon in the browser tab.
 # When I first started this site, I was missing an icon, so naturally I set about making one for myself.
-# What then began as some throwaway code to generate a tiny image soon became its own project and ultimately turned into something pretty cool,
+# What then began as some throwaway code to generate a tiny image soon became its own project and ultimately turned into something cooler than I originally expected,
 # so I'm going to explain what it is and how I made it.
 #
 # ## The Hilbert Curve
@@ -132,13 +132,13 @@ hilbert_rgba = cmap(hilbert_values)
 show(hilbert_rgba)
 # -
 
-# That's it! We can stop here, and just for the website favicon, there's
+# That's it! We can stop here, and just for the tiny website icon, there's
 # arguably no reason to keep working on it.
 # However, we'll take it a little bit further because there's more to
 # life and math than favicons, and there's something a little bit
 # unsatisfying about what we've created here.
 # In my opinion some of the most interesting fractal structure is difficult to get from this visualization,
-# so we're going to look for a way to see it better in all its glory.
+# so we're going to look for a way to see it better.
 #
 # But before making things more complicated, let's briefly pause and simplify.
 # By looking at the `hilbert_values` data in its raw form,
@@ -156,7 +156,7 @@ print(data[::-1])  # reverse the rows to align with the image
 # numbers up to 63, and
 # we can always get from one number to the next by going one step up, down, left, or right.
 # So it really is a single continuous path that seems to fill up a whole square, hence the term "space-filling."
-# With the help of Matplotlib, we can even look at that path directly:
+# With the help of Matplotlib, we can even trace out that path:
 
 # +
 def plot_path(bits):
@@ -176,8 +176,8 @@ plt.show()
 plot_path(bits=4)
 plt.show()
 
-# To make this even clearer, we can put levels 1-4 next to each other,
-# so we can see how each subsequent iteration level connects together four small copies of the previous level.
+# To make this even clearer, we can put levels 1-4 next to each other
+# to help up see how each subsequent iteration level connects together four small copies of the previous level.
 
 for bits in range(1, 5):
     plt.subplot(2, 2, bits)
@@ -185,7 +185,7 @@ for bits in range(1, 5):
     plt.title(f"Level {bits}")
 plt.show()
 
-# To see this same type of structure in the original plasma-colormapped image, we need to start at the darkest color
+# To see this same type of structure in the original `plasma`-colormapped image, we need to start at the darkest color
 # in the lower left corner and try to trace out a path that makes the colors change as continuously as possible
 # while traversing over the whole square.
 # Let's repeat the original image here for easy reference:
@@ -196,15 +196,18 @@ show(hilbert_rgba)
 # or even just three to be conservative.
 # That's a shame because the image uses eight iterations and thus
 # technically should have much finer detail than that.
-# However, there are some pretty fundamental limitations here.
-# For one, the `plasma` colormap is implemented as a list of 256 different colors,
-# and even with interpolation, there's a limit to how many different colormap colors
-# the color space can computationally represent.
-# Second, there are the challenges of human perception.
+# However, we're up against some pretty fundamental limitations.
+# First, we have challenges of human perception.
 # If we want to be able to see a continuous path through the colors,
 # we should be able to see all the color discontinuities,
 # but the smaller discontinuities have really small color jumps,
-# and that's just fundamentally hard to see.
+# and those are just hard to see.
+# Second, there's a fundamental computational limitation,
+# because our color depth is finite.
+# Twenty-four-bit color literally doesn't have enough precision
+# to represent our `plasma`-colormapped image in such a way that
+# all the color discontinuities appear at exactly the right places
+# at the high levels of detail that we're demanding.
 #
 # Therefore, while I think the color mapping idea clearly has some value,
 # it looks like it's going to need some help if we really want to see a detailed Hilbert curve.
@@ -270,7 +273,7 @@ hilbert_rgba[..., :3] *= mask[..., None]
 show(hilbert_rgba)
 
 
-# Now we can really see the structure, but it's got the opposite problem:
+# Now there's much more structure, but it's got the opposite problem:
 # there's so much detail that it's hard for the eye to follow.
 # We'll try to address that next.
 #
@@ -278,7 +281,8 @@ show(hilbert_rgba)
 #
 # It would be easier to see the path of the space-filling curve across the square if we could see where it was turning
 # right and left, right?
-# To do that, we'll need to sacrifice some of the finest details in the masked image, but maybe it will be worth the trade.
+# To do that, we'll need to sacrifice some of the finest details in the masked image,
+# but hopefully it'll be worth the trade.
 # We'll do it by applying a corner-rounding morphology operation.
 # The technical name for it is _opening_, but I'll call it something else because in my opinion the terms _opening_ and _closing_
 # from morphology are not intuitive at all.
@@ -305,8 +309,8 @@ def circular_stencil(n):
 def round_corners(mask, roundness):
     """
     Compute a new mask with internal corners rounded off.
-    The nonnegative integer `roundness` value controls how much rounding is done,
-    with 0 meaning none.
+    The nonnegative integer `roundness` value controls how much rounding
+    is done, with 0 meaning none.
     """
     masks = [mask]
     for n in range(1, roundness + 1):
@@ -321,17 +325,20 @@ show(hilbert_rgba)
 
 # -
 
-# It seems to have done the right thing, but it's pretty clear that our
+# It looks like we have rounder corners now,
+# but unfortunately we also darkened the whole image,
+# and that's because our
 # mask normalization is no longer correct.
-# To fix that, let's move some of the normalization to after the corner rounding, and let's also add the possibility of
+# To fix that, let's move some of the normalization to after the corner rounding,
+# and let's also add the possibility of
 # brightening the top few percent of mask values, to partially compensate for the fact that we're generally making everything darker.
 
 # +
 def get_edge_mask(data, roundness):
     """
-    Compute a mask to darken edge discontinuities.
-    Internal corners will be rounded according to the nonnegative integer
-    `roundness` value, with 0 meaning none.
+    Compute a mask to darken edge discontinuities, also rounding
+    internal corners. The nonnegative integer `roundness` value
+    controls how much rounding is done, with 0 meaning none.
     """
     edges = scipy.signal.convolve(data + 4, edge_filter(1), mode='same')
     mask = -np.log(np.abs(edges))
@@ -343,9 +350,9 @@ def get_edge_mask(data, roundness):
 
 def apply_mask(rgba, mask):
     """
-    Darken or lighten image values according to the mask. Mask values should
-    be nonnegative, with values less than 1 darkening and values greater than 1
-    lightening.
+    Darken or lighten image values using the mask. Mask values should
+    be nonnegative, with values less than 1 darkening the corresponding
+    image pixels and values greater than 1 lightening them.
     """
     # The `+ 1.0` fudge factor prevents too much lightening.
     # We're trying to get a subtle effect.
@@ -364,27 +371,29 @@ hilbert_rgba = apply_mask(hilbert_rgba_raw, mask)
 show(hilbert_rgba)
 # -
 
-# I think that strikes a pretty good compromise between our criteria.
-# We lost some detail, but there's still plenty,
-# and it's possible to visually follow the colors around the square
-# from the blue parts through purple, pink, orange, and finally yellow.
-# Also, it isn't too bright or dark.
+# I think that strikes a pretty good compromise.
+# We didn't lose too much edge detail compared to the first masking attempt,
+# and in my opinion it's not too hard to visually follow the curve through the colorful parts.
 #
 # If it's still hard to see the larger-scale structure, simply increasing the `roundness` value works pretty well,
-# but it does increase the computation time a bit, and of course we lose even more detail:
+# but it does increase the computation time, and we lose more detail:
 
-show(apply_mask(hilbert_rgba_raw, get_edge_mask(hilbert_values, roundness=15)))
+mask = get_edge_mask(hilbert_values, roundness=15)
+hilbert_rgba = apply_mask(hilbert_rgba_raw, mask)
+show(hilbert_rgba)
 
 
+# I personally prefer the previous one, so we'll go back to `roundness=5` in what follows.
+#
 # ## Resharpening
 #
 # You might notice that the dark edges in the image are all two pixels wide, which seems really unnecessary in my opinion.
-# To make these edges, we had to sacrifice some valuable plasma-color pixels,
+# To make these edges, we had to sacrifice some valuable `plasma`-color pixels,
 # and it would be nice to have the edges be just one pixel wide so we could keep more of the colorful parts.
 #
 # The edge width is a feature of the edge detection filter we applied, and it's kind of impossible for it to do better than two pixels,
 # since every edge will be detected from both sides.
-# That's fine, though: since we can choose our resolution (as long as it's a power of two),
+# That's fine, though: since we can choose our resolution to be any power of two,
 # we can just render the image at double the resolution we actually want, and then shrink it by a factor of two!
 # Then our two-pixel-wide edges should shrink down to just one pixel.
 # However, we need to be careful here: the middle of every edge is always an even number of pixels from the image boundaries.
@@ -392,8 +401,8 @@ show(apply_mask(hilbert_rgba_raw, get_edge_mask(hilbert_values, roundness=15)))
 # and won't be shrunk down at all!
 # We can avoid that just by adding a one-pixel boundary to the image.
 #
-# (Since we're doing most of the computation at a higher resolution now, for consistency we'll also increase the `roundness` value below,
-# since its units are absolute pixels.)
+# Since we're doing most of the computation at a higher resolution now, for consistency we'll also increase the `roundness` value below from 5 to 10,
+# since `roundness` counts in absolute pixel units.
 
 # +
 def shrink_image(rgba):
