@@ -3,6 +3,14 @@ title: News
 layout: default
 ---
 
+# 2025-01-30
+
+I added the first technical article, [About the Favicon](./favicon.html).
+
+# 2025-01-17
+
+I've added a [site favicon](./favicon.ico).
+
 # 2024-12-16
 
 I made a small improvement to the Super-Apollonian fractal. The
