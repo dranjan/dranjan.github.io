@@ -512,3 +512,12 @@ save(hilbert_rgba_final, 'build/avatar.png')  # for GitHub
 # here. Matplotlib's excellent `plasma` colormap, which we've been using here,
 # was created by [St&eacute;fan van der Walt and Nathaniel
 # Smith](https://bids.github.io/colormap/).
+#
+# ## Metadata
+#
+# **Author:** Darsh Ranjan <br/>
+# **Publication Date:** 2025-01-30 <br/>
+# **Last Edited:** 2025-02-04 <br/>
+# **License:** The code in this article is made available under the
+# [GNU General Public License, version
+# 3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
