@@ -46,7 +46,7 @@
 #
 # $$
 # \begin{align*}
-# H(v) &= \big(f(v), g(v)\big) = \frac12\cdot
+# H(v) &= \big(f(v), g(v)\big) \\ &= \frac12\cdot
 # \begin{cases}
 # \big(g(4v), f(4v)\big) &\text{if } 0\leq v \leq\tfrac14, \\
 # \big(f(4v-1), 1+g(4v-1)\big) &\text{if } \tfrac14 \leq v \leq \tfrac12, \\
