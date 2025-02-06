@@ -26,9 +26,13 @@
 #
 # <!--insert:toc-->
 #
-# If you've spent some time on my website...firstly, thank you! Secondly, you may have noticed a colorful little square icon in the browser tab.
+# If you've spent some time on my website...firstly, thank you!
+# Secondly, you may have noticed a colorful little square icon in the
+# browser tab, also known as the site _favicon_.
 # When I first started this site, I was missing an icon, so naturally I set about making one for myself.
-# What then began as some throwaway code to generate a tiny image soon became its own project and ultimately turned into something cooler than I originally expected,
+# What then began as some throwaway code to generate a tiny image soon
+# became its own project and ultimately turned into something cooler
+# than I originally expected,
 # so I'm going to explain what it is and how I made it.
 #
 # ## The Hilbert Curve
