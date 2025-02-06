@@ -1,7 +1,12 @@
 ---
 title: News
 layout: default
+nav_order: 4
 ---
+# 2025-02-05
+
+I added [About This Site](./about.html) and moved the old default
+sidebar footer to it.
 
 # 2025-01-30
 
