@@ -85,3 +85,9 @@ code {
 .text-mono {
   font-family: "Fira Mono", $mono-font-family !important;
 }
+
+.center-image {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
