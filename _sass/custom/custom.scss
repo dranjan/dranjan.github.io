@@ -82,6 +82,14 @@ code {
   font-family: "Fira Mono", $mono-font-family;
 }
 
+.main-content {
+  line-height: 1.45;
+}
+
+.highlight {
+  line-height: 1.35;
+}
+
 .text-mono {
   font-family: "Fira Mono", $mono-font-family !important;
 }
