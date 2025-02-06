@@ -234,15 +234,16 @@ show(hilbert_rgba)
 # visual background.
 
 # +
-import scipy
+from scipy.signal import convolve
 
 def edge_filter(n):
     """
-    Return a simple edge detection filter.
-    The result will be square with 2*n + 1 elements on each side.
+    Return a simple edge detection filter. The result will be square
+    with 2*n + 1 elements on each side.
     """
     # I didn't think too hard about these coefficients. In practice we
-    # use a tiny neighborhood size anyway, so it doesn't matter too much.
+    # use a tiny neighborhood size anyway, so it doesn't matter too
+    # much.
     x = np.r_[-n:n+1]
     coefficients = np.maximum(0, n + 1 - np.hypot(x, x[:, None]))
     coefficients /= -coefficients.sum()
@@ -250,10 +251,10 @@ def edge_filter(n):
     return coefficients
 
 # SciPy implicitly zero-pads our data inside `convolve`, so if we
-# temporarily shift all the values by some big number (4), the boundary
-# of the image will be detected as edges.
-# This is consistent with the positive/negative space idea.
-edges = scipy.signal.convolve(hilbert_values + 4, edge_filter(1), mode='same')
+# temporarily shift all the values by some big number (4), the
+# boundary of the image will be detected as edges. This is consistent
+# with the positive/negative space idea.
+edges = convolve(hilbert_values + 4, edge_filter(1), mode='same')
 mask = -np.log(np.abs(edges))
 mask -= mask[mask.shape[0]//2, mask.shape[1]//2]
 mask /= np.quantile(mask, 0.75)
@@ -294,12 +295,15 @@ show(hilbert_rgba)
 # To make the effect less abrupt, we'll apply several different corner radii and average over all the results.
 
 # +
+from scipy.ndimage import minimum_filter, maximum_filter
+
 def maxmin_filter(data, stencil):
     """
-    Apply a minimum filter followed by a maximum filter to the input image.
+    Apply a minimum filter followed by a maximum filter to the input
+    image.
     """
-    data0 = scipy.ndimage.minimum_filter(data, footprint=stencil, mode='constant')
-    return scipy.ndimage.maximum_filter(data0, footprint=stencil, mode='constant')
+    data0 = minimum_filter(data, footprint=stencil, mode='constant')
+    return maximum_filter(data0, footprint=stencil, mode='constant')
 
 def circular_stencil(n):
     """
@@ -313,8 +317,8 @@ def circular_stencil(n):
 def round_corners(mask, roundness):
     """
     Compute a new mask with internal corners rounded off.
-    The nonnegative integer `roundness` value controls how much rounding
-    is done, with 0 meaning none.
+    The nonnegative integer `roundness` value controls how much
+    rounding is done, with 0 meaning none.
     """
     masks = [mask]
     for n in range(1, roundness + 1):
@@ -344,7 +348,7 @@ def get_edge_mask(data, roundness):
     internal corners. The nonnegative integer `roundness` value
     controls how much rounding is done, with 0 meaning none.
     """
-    edges = scipy.signal.convolve(data + 4, edge_filter(1), mode='same')
+    edges = convolve(data + 4, edge_filter(1), mode='same')
     mask = -np.log(np.abs(edges))
     mask -= mask[mask.shape[0]//2, mask.shape[1]//2]
     mask[mask < 0] = 0
@@ -355,18 +359,17 @@ def get_edge_mask(data, roundness):
 def apply_mask(rgba, mask):
     """
     Darken or lighten image values using the mask. Mask values should
-    be nonnegative, with values less than 1 darkening the corresponding
-    image pixels and values greater than 1 lightening them.
+    be nonnegative, with values less than 1 darkening the
+    corresponding image pixels and values greater than 1 lightening
+    them.
     """
     # The `+ 1.0` fudge factor prevents too much lightening.
     # We're trying to get a subtle effect.
     v1 = mask.max() + 1.0
-    mask0 = mask <= 1
-    mask1 = mask0 ^ True
-
+    a = np.minimum(mask, (v1 - mask)/(v1 - 1))
+    b = np.maximum(0, (mask - 1)/(v1 - 1))
     rgba = rgba.copy()
-    rgba[mask0, :3] *= mask[mask0, None]
-    rgba[mask1, :3] = 1 - (1 - rgba[mask1, :3])*(v1 - mask[mask1, None])/(v1 - 1)
+    rgba[..., :3] = rgba[..., :3]*a[..., None] + b[..., None]
     return rgba
 
 hilbert_rgba_raw = cmap(hilbert_values)
@@ -412,14 +415,15 @@ show(hilbert_rgba)
 def shrink_image(rgba):
     """
     Shrink the input image by a factor of two. This is done carefully
-    by first adding a one-pixel border, so that internal Hilbert
-    curve borders get sharpened.
+    by first adding a one-pixel border, so that internal Hilbert curve
+    borders get sharpened.
     """
     s0, s1 = rgba.shape[:2]
     rgba_padded = np.zeros((s0 + 2, s1 + 2, 4))
     rgba_padded[..., 3] = 1
     rgba_padded[1:-1, 1:-1, :] = rgba
-    return rgba_padded.reshape(s0//2 + 1, 2,  s1//2 + 1, 2, 4).mean(axis=(1, 3))
+    rgba = rgba_padded.reshape(s0//2 + 1, 2,  s1//2 + 1, 2, 4)
+    return rgba.mean(axis=(1, 3))
 
 hilbert_values = compute_hilbert(bits=9)
 hilbert_rgba = cmap(hilbert_values)
@@ -453,28 +457,32 @@ print(hilbert_rgba.shape)
 # Here's the code for that, and the final result.
 
 # +
-def pad_image(rgba, dim=(460, 460), border_size=10, border_shift=(-3, 3)):
-    """
-    Add a transparent border to the given image, padding it to the specified
-    dimensions. The input image will be centered in the result.
+from scipy.ndimage import distance_transform_edt
 
-    The image will have a black border that fades away from the image. A shift
-    can also be applied to add the illusion of depth.
+def pad_image(rgba, dim=(460, 460),
+              border_size=10, border_shift=(-3, 3)):
+    """
+    Add a transparent border to the given image, padding it to the
+    specified dimensions. The input image will be centered in the
+    result.
+
+    The image will have a black border that fades away from the image.
+    A shift can also be applied to add the illusion of depth.
     """
     size0, size1 = rgba.shape[:2]
     if size0 > dim[0] or size1 > dim[1]:
         raise RuntimeError("image doesn't fit")
-    offset0 = (dim[0] - size0)//2
-    offset1 = (dim[1] - size1)//2
+    off0 = (dim[0] - size0)//2
+    off1 = (dim[1] - size1)//2
     rgba_padded = np.zeros((dim[0], dim[1], 4))
-    rgba_padded[offset0:offset0 + size0, offset1:offset1 + size1] = rgba
+    rgba_padded[off0:off0 + size0, off1:off1 + size1] = rgba
 
     # Here's the black border and shadow. distance_transform_edt is a
     # little bit too much machinery for what we're doing here, but we
     # already have the dependency and it's a one-liner, so...
     bg = np.ones(rgba_padded.shape[:2])
-    bg[offset0:offset0 + size0, offset1:offset1 + size1] = 0
-    d = scipy.ndimage.distance_transform_edt(bg)
+    bg[off0:off0 + size0, off1:off1 + size1] = 0
+    d = distance_transform_edt(bg)
     alpha = np.maximum(0, border_size - d) / border_size
     alpha = np.roll(alpha, border_shift[0], axis=0)
     alpha = np.roll(alpha, border_shift[1], axis=1)
@@ -502,8 +510,8 @@ def save(rgba, filename):
     image.save(filename)
 
 os.makedirs('build', exist_ok=True)
-save(hilbert_rgba, 'build/favicon.ico')       # Icon format, for the website
-save(hilbert_rgba, 'build/hilbert.png')       # PNG format, for general use
+save(hilbert_rgba, 'build/favicon.ico')  # Icon format for the website
+save(hilbert_rgba, 'build/hilbert.png')  # PNG format for general use
 save(hilbert_rgba_final, 'build/avatar.png')  # for GitHub
 # -
 
@@ -521,7 +529,7 @@ save(hilbert_rgba_final, 'build/avatar.png')  # for GitHub
 #
 # **Author:** Darsh Ranjan <br/>
 # **Publication Date:** 2025-01-30 <br/>
-# **Last Edited:** 2025-02-04 <br/>
+# **Last Edited:** 2025-02-05 <br/>
 # **License:** The code in this article is made available under the
 # [GNU General Public License, version
 # 3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
