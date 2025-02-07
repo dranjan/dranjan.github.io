@@ -37,7 +37,6 @@ After checking out the repository, run `./convert.sh`. This will do a few things
 When that completes successfully, follow the printed instructions to update the
 Jekyll site.
 
-TODO: merge this into the main repository.
 TODO: configure the Github actions to run all of this transparently.
 
 ## Notebook Quirks
