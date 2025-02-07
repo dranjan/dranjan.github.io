@@ -1,64 +1,89 @@
-<div align="center">
-    <img src="https://github.com/dranjan.png">
-</div>
+This is really kludgy. I hope to streamline a lot of this, but for now
+here's a summary of how to work with this material.
 
-This is the code I use to generate my website's favicon and my GitHub
-avatar. To run it, create a Python3 `virtualenv` environment and
-install the dependencies there:
+The notebooks are intended for publication on my website, but the path
+to getting them there is fairly wiggly.
 
-- NumPy
-- SciPy
-- Pillow
-- Matplotlib
+## Prerequisites
 
-Then run `python hilbert.py` after activating the `virtualenv` environment.
-The outputs will be generated under `./build`.
+To begin, the following Python dependencies are required:
 
-Alternatively, if you have `uv`, you can simply `uv run hilbert.py`.
+- jupyter
+- jupytext
+- jekyllnb
+- numpy
+- scipy
+- matplotlib
+- pillow
 
-## What Is It?
+Those should be installed in a Virtualenv.
 
-It's a visualization of a Hilbert curve. A Hilbert curve is a
-two-dimensional plane-filling curve, or more precisely a continuous
-surjective mapping from the unit interval $[0, 1]$ to the unit square
-$[0, 1]\times [0, 1]$. The mapping isn't injective, but it's
-approximated arbitrarily well by injective mappings.
+TODO: handle that with proper tooling.
 
-To make the visualization, we choose a one-dimensional colormap for the
-input interval and push it forward with the surjective mapping to color
-the square. As I said earlier, the mapping isn't injective, but that's
-fine, since we can use the injective approximations I mentioned. That
-works particularly well if our square image has a power-of-two number of
-pixels, because that means we can conveniently make the injective
-approximation visit each pixel exactly once.
+## Running It
 
-Finally, we do some image processing to enhance edges and corners.
-That's really optional, and whether this step improves the result or not
-is a matter of personal taste. I find myself going back and
-forth on it, and I can make both an aesthetic and mathematical case for
-either version. Ultimately, I keep the extra postprocessing because:
+The notebooks are maintained primarily as Python scripts, but they can also be edited in
+the more conventional `.ipynb` form. The latter are ignored in Git and must be generated
+from the `.py` sources, and resynced to them in order to track changes.
 
-1. it makes it easier to see how the interval snakes its way across the
-   square, and
-2. it makes the fractal structure easier to see.
+After checking out the repository, run `./convert.sh`. This will do a few things:
 
-Since website favicons are typically rendered at very small sizes, it
-hardly makes any difference there at all, but for simplicity, I try to
-use the same version everywhere.
+1. Recreate the `.ipynb` notebooks from the `.py` sources.
+2. Convert each `.ipynb` to its Jekyll markdown form in `build/site`.
+3. Process hand-rolled directives to fix things for Jekyll, since
+   Jupyter and Jekyll markdown aren't 100% compatible.
+4. Make a nice tarball of everything that can be overlayed on top of the Jekyll site.
 
-## Acknowledgements
+When that completes successfully, follow the printed instructions to update the
+Jekyll site.
 
-A lot of heavy lifting is being done by the colormap. The
-scientific programming community has done some great work in creating
-colormaps that are both visually appealing and avoid distortion as
-perceived visually by humans, and both of those qualities are valuable
-here. The one I've selected here is Matplotlib's `plasma`, which
-was created by [St&eacute;fan van der Walt and Nathaniel
-Smith](https://bids.github.io/colormap/).
+TODO: merge this into the main repository.
+TODO: configure the Github actions to run all of this transparently.
 
-## Copyright
+## Notebook Quirks
 
-Copyright Darsh Ranjan.
+The following rules must be followed in order to work seamlessly with both Jupyter and Jekyll.
+As mentioned above, these two systems aren't fully compatible, so there's a hand-rolled system
+here to bridge the gap. The syntax is pretty brittle, but it's sufficient for now.
 
-This software is released under the GNU General Public License,
-version 3. See the file [COPYING](./COPYING) for details.
+### Notebook Metadata
+
+If the notebook contains any LaTeX formulas in Markdown cells, then the `jekyll` table in
+the notebook's metadata must contain the field `katex: true`. This is detected and handled
+appropriately in the main repository. The only purpose of this logic is to avoid loading
+KaTeX assets for the pages that don't need them.
+
+### Inline Math
+
+Inline math must be written exactly like this:
+
+    <!--begin:mathinline-->$PUT MATH HERE$<!--end:mathinline-->
+
+The HTML comments are ignored in JupyterLab, but this repository's tooling will find them
+and convert them into the proper syntax that is understood by Jekyll and KaTeX.
+
+TODO: look into Pandoc as an alternative to Kramdown, which may be more
+compatible with Jupyter.
+
+### Display Math
+
+Display math must be in separate paragraphs:
+
+    Some text here
+
+    $$
+    display math here
+    $$
+
+    More normal text here
+
+### Table of Contents
+
+Put the HTML comment
+
+    <!--insert:toc-->
+
+where the table of contents should go. For a heading that should not appear in the table,
+annotate it like this:
+
+    # Some Heading <!--insert:no-toc-->
