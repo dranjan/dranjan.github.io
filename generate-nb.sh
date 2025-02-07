@@ -2,8 +2,8 @@
 
 set -euxo pipefail
 
-pushd nb
+pushd _nb
 ./convert.sh
 popd
 
-tar xzvf nb/build/site.tar.gz
+tar xzvf _nb/build/site.tar.gz

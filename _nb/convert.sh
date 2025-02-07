@@ -2,6 +2,7 @@
 
 set -euxo pipefail
 
+export PDM_IGNORE_ACTIVE_VENV=1
 pdm run jupytext --to notebook --execute favicon.py
 pdm run jupyter jekyllnb --site-dir build/site --page-dir generated --image-dir assets/generated favicon.ipynb
 sed -f fix-md.sed -i build/site/generated/favicon.md

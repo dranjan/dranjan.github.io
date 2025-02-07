@@ -65,7 +65,7 @@ jobs:
           python-version: 3.13
       - name: Install Python dependencies
         run: |
-          pdm sync -p nb
+          pdm sync -p _nb
       - name: Install system packages
         run: |
           sudo apt-get install -y sed tar
