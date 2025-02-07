@@ -10,19 +10,13 @@ The notebooks are maintained primarily as Python scripts, but they can also be e
 the more conventional `.ipynb` form. The latter are ignored in Git and must be generated
 from the `.py` sources, and resynced to them in order to track changes.
 
-After checking out the repository, run `./convert.sh`. This will do a few things:
+After checking out the repository, run `_scripts/generate-nb.sh` in the
+repository root. This will do a few things:
 
 1. Recreate the `.ipynb` notebooks from the `.py` sources.
 2. Convert each `.ipynb` to its Jekyll markdown form in `build/site`.
 3. Process hand-rolled directives to fix things for Jekyll, since
    Jupyter and Jekyll markdown aren't 100% compatible.
-4. Make a nice tarball of everything that can be overlayed on top of the Jekyll site.
-
-When that completes successfully, follow the printed instructions to update the
-Jekyll site.
-
-This is all done transparently in the GitHub actions, and by the parent
-directory's `generate-nb.sh` script.
 
 ## Notebook Quirks
 

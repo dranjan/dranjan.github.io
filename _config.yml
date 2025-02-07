@@ -10,3 +10,7 @@ kramdown:
 
 include:
   - generated
+
+exclude:
+  - CNAME
+  - README.md

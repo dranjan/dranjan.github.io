@@ -68,10 +68,10 @@ jobs:
           pdm sync -p _nb
       - name: Install system packages
         run: |
-          sudo apt-get install -y sed tar
+          sudo apt-get install -y sed
       - name: Convert notebooks
         run: |
-          ./generate-nb.sh
+          _scripts/generate-nb.sh
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
