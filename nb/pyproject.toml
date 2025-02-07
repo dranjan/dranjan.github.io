@@ -1,0 +1,23 @@
+[project]
+name = "darshsrad-nb"
+version = "0.1.0"
+description = "Notebooks for darshsrad.com"
+authors = [
+    {name = "Darsh Ranjan", email = "dranjan@berkeley.edu"},
+]
+dependencies = [
+    "jekyllnb",
+    "jupyter",
+    "jupytext",
+    "lxml[html_clean]",
+    "matplotlib",
+    "numpy",
+    "pillow",
+    "scipy",
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "GPL-3.0"}
+
+[tool.pdm]
+distribution = false

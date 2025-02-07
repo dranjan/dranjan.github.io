@@ -1,2 +1,5 @@
 build/
 *.ipynb
+.pdm-python
+.python-version
+.venv

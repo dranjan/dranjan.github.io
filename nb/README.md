@@ -4,21 +4,11 @@ here's a summary of how to work with this material.
 The notebooks are intended for publication on my website, but the path
 to getting them there is fairly wiggly.
 
-## Prerequisites
+## Initial setup
 
-To begin, the following Python dependencies are required:
-
-- jupyter
-- jupytext
-- jekyllnb
-- numpy
-- scipy
-- matplotlib
-- pillow
-
-Those should be installed in a Virtualenv.
-
-TODO: handle that with proper tooling.
+Install PDM (say, via `pipx`) and execute `./init.sh` in this directory.
+This should install all Python dependencies in a local virtualenv
+environment.
 
 ## Running It
 
