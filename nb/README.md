@@ -1,9 +1,3 @@
-This is really kludgy. I hope to streamline a lot of this, but for now
-here's a summary of how to work with this material.
-
-The notebooks are intended for publication on my website, but the path
-to getting them there is fairly wiggly.
-
 ## Initial setup
 
 Install PDM (say, via `pipx`) and execute `./init.sh` in this directory.
@@ -27,7 +21,8 @@ After checking out the repository, run `./convert.sh`. This will do a few things
 When that completes successfully, follow the printed instructions to update the
 Jekyll site.
 
-TODO: configure the Github actions to run all of this transparently.
+This is all done transparently in the GitHub actions, and by the parent
+directory's `generate-nb.sh` script.
 
 ## Notebook Quirks
 
@@ -39,7 +34,7 @@ here to bridge the gap. The syntax is pretty brittle, but it's sufficient for no
 
 If the notebook contains any LaTeX formulas in Markdown cells, then the `jekyll` table in
 the notebook's metadata must contain the field `katex: true`. This is detected and handled
-appropriately in the main repository. The only purpose of this logic is to avoid loading
+appropriately by the rest of the tooling. The only purpose of this logic is to avoid loading
 KaTeX assets for the pages that don't need them.
 
 ### Inline Math
