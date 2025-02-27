@@ -68,7 +68,7 @@ jobs:
           pdm sync -p _nb
       - name: Install system packages
         run: |
-          sudo apt-get install -y sed
+          sudo apt-get install -y curl
       - name: Convert notebooks
         run: |
           _scripts/generate-nb.sh
@@ -78,6 +78,9 @@ jobs:
           ruby-version: '3.3' # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
+      - name: Fetch Assets
+        run: |
+          _scripts/fetch-assets.sh
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
