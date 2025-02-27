@@ -3,7 +3,7 @@ This is the source repository for my website, www.darshsrad.com.
 This README describes the build process and architecture for the website.
 If you're familiar with GitHub actions and the general concept
 of a static site generator, you may want to skip straight to the
-[workflow](./.github/worfklows/pages.yml)
+[workflow](./.github/workflows/pages.yml)
 that actually builds and deploys the site.
 
 The discussion below assumes Linux as the host system. Ubuntu and
@@ -17,7 +17,7 @@ Nothing else here should require `sudo` or any system-level changes.
 
 ### Python Setup
 
-Follow the initial setup instructions in [\_nb](./nb/README.md).
+Follow the initial setup instructions in [\_nb](./_nb/README.md).
 
 ### Ruby Setup
 
