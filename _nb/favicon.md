@@ -25,7 +25,7 @@ jupyter:
 {: .no_toc}
 </markdown>
 
-***or, Visualizing Hilbert Curves in Python***
+***or, Visualizing a Hilbert Curve in Python***
 
 <markdown>
 - TOC
@@ -33,7 +33,7 @@ jupyter:
 </markdown>
 
 If you've spent some time on my website...firstly, thank you!
-Secondly, you may have noticed a colorful little square icon in the
+Secondly, you may have noticed a [colorful little square icon](./favicon.ico) in the
 browser tab, also known as the site _favicon_.
 When I first started this site, I was missing an icon, so naturally I set about making one for myself.
 What then began as some throwaway code to generate a tiny image soon
@@ -73,7 +73,7 @@ and that this $H$ is actually _surjective_, i.e., maps onto the whole unit squar
 A two dimensional shape as the image of a one-dimensional interval under a continuous function, isn't that pretty amazing?
 I'll skip the proof here because it's too much of a digression,
 but like I said it isn't too difficult if you're interested in trying to fill in the details,
-after say a first undergraduate course in analysis.
+with a little bit of real analysis.
 
 So here's the game plan for the visualization:
 first we'll pick a nice colormap for the input interval $[0, 1]$, and then we'll
@@ -100,7 +100,8 @@ but later on we'll also want it to avoid becoming overly dark.
 It seems quite difficult to achieve all of those and still maintain some semblance of aesthetics,
 but Matplotlib's `plasma` does it pretty well in my opinion, so that's what we'll use.
 
-As we get started with code, if you want to follow along with this implementation, we need to get a couple things sorted first.
+As we get started with code, if you want to follow along with this Python implementation,
+we need to get a couple things sorted first.
 First, you'll need these dependencies:
 
     pip install numpy scipy matplotlib pillow
@@ -145,7 +146,7 @@ arguably no reason to keep working on it.
 However, we'll take it a little bit further because there's more to
 life and math than favicons, and there's something a little bit
 unsatisfying about what we've created here.
-In my opinion some of the most interesting fractal structure is difficult to get from this visualization,
+In my opinion some of the most interesting fractal structure is difficult to see in this visualization,
 so we're going to look for a way to see it better.
 
 But before making things more complicated, let's briefly pause and simplify.
@@ -165,7 +166,7 @@ Starting with 0 in the bottom left corner, we have all the whole
 numbers up to 63, and
 we can always get from one number to the next by going one step up, down, left, or right.
 So it really is a single continuous path that seems to fill up a whole square, hence the term "space-filling."
-With the help of Matplotlib, we can even trace out that path:
+With the help of Matplotlib, we can trace it out:
 
 ```python
 def plot_path(bits):
@@ -455,7 +456,7 @@ but they won't change this final result of the computation.
 If I wanted to...I don't know, create an avatar for my public GitHub profile, there are a few more considerations.
 First, the optimum size for GitHub avatars seems to be 460 pixels by 460 pixels.
 Second, the visible part of the avatar is, for reasons I still can't understand, a _circular_ region inside of the full avatar image.
-Third, the background the avatar is shown on doesn't have a fixed color and depends on the user's browser settings and selected theme.
+Third, the background the avatar is shown on doesn't have a fixed color and depends on the viewer's browser settings and selected theme.
 
 The image we just created is 257 pixels by 257 pixels:
 
@@ -515,7 +516,7 @@ show(hilbert_rgba_final)
 
 Finally,
 we'll want image files we can send around and upload. The Pillow
-package makes this simple.
+package, imported below as `PIL`, makes this simple.
 
 ```python
 import os
@@ -545,7 +546,7 @@ Smith](https://bids.github.io/colormap/).
 
 **Author:** Darsh Ranjan <br/>
 **Publication Date:** 2025-01-30 <br/>
-**Last Edited:** 2025-02-05 <br/>
+**Last Edited:** 2025-04-13 <br/>
 **License:** The code in this article is made available under the
 [GNU General Public License, version
 3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).
