@@ -1,6 +1,7 @@
 ## Initial setup
 
-Install PDM (say, via `pipx`) and execute `./init.sh` in this directory.
+Install [PDM](https://pdm-project.org) (say, via `pipx`)
+and execute `./init.sh` in this directory.
 This should install all Python dependencies in a local virtualenv
 environment.
 

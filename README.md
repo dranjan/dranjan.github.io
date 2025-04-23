@@ -51,8 +51,8 @@ This is the suggested invocation:
 
     bundle exec jekyll serve --host 0.0.0.0
 
-which allows the site to be viewed at `http://localhost:4000` on any computer
-on the local network.
+which allows the site to be viewed at `http://localhost:4000` on the host computer
+or at `http://<local_ip_address>:4000` on any computer on the local network.
 This will automatically rebuild the site whenever any Jekyll source file is modified,
 but it will not catch changes in `_nb` because Jekyll doesn't process that
 directly.
