@@ -13,21 +13,21 @@ cp "${katex_src}/stylesheets/katex.css" "${katex_dst}/katex.css"
 cp "${katex_src}/fonts"/*.woff2 "${katex_dst}/fonts/"
 
 # Fira Sans and Fira Mono
+# TODO: use github.com/BboxType
 fira_dst="assets/vendor/fira/fonts"
-fira_src="https://free.bboxtype.com/embedfonts/fonts.php"
+fira_src="https://code.cdn.mozilla.net/fonts/woff"
 
 function get-fira-sans {
     local weight="$1"
     local name="$2"
-    curl -fLsS "${fira_src}?family=FiraSans&weight=${weight}" > "${fira_dst}/FiraSans-${name}.woff"
+    curl -fLsS "${fira_src}/FiraSans-${name}.woff" > "${fira_dst}/FiraSans-${name}.woff"
 }
 
 function get-fira-mono {
     local weight="$1"
     local name="$2"
-    curl -fLsS "${fira_src}?family=FiraMono&weight=${weight}" > "${fira_dst}/FiraMono-${name}.woff"
+    curl -fLsS "${fira_src}/FiraMono-${name}.woff" > "${fira_dst}/FiraMono-${name}.woff"
 }
-
 
 mkdir -p "${fira_dst}"
 get-fira-sans 400 Regular
