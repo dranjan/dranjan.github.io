@@ -17,20 +17,16 @@ fira_dst="assets/vendor/fira/fonts"
 fira_src="https://github.com/bBoxType/FiraSans/raw/refs/heads/master"
 
 function get-fira {
-    local slant
-    local name
+    local name="$2"
+    local slant="$3"
     local url
     local font
-    name="$(get-weight-name "$2")"
-    if [[ "$3" == "i" ]]; then
-        slant=Italic
+    if [[ "$slant" == "Italic" ]]; then
         if [[ "$name" == "Regular" ]]; then
             name="Italic"
         else
             name="${name}Italic"
         fi
-    else
-        slant=Roman
     fi
     case "$1" in
         sans)
@@ -47,31 +43,13 @@ function get-fira {
     curl -fLsS "${url}/${font}-${name}.woff" > "${fira_dst}/${font}-${name}.woff"
 }
 
-function get-weight-name {
-    case "$1" in
-        100) echo Thin ;;
-        200) echo ExtraLight ;;
-        300) echo Light ;;
-        400) echo Regular ;;
-        500) echo Medium ;;
-        600) echo SemiBold ;;
-        700) echo Bold ;;
-        800) echo ExtraBold ;;
-        900) echo Heavy ;;
-        *) return 1
-    esac
-}
-
 mkdir -p "${fira_dst}"
-get-fira sans 400 r
-get-fira sans 400 i
-get-fira sans 500 r
-get-fira sans 500 i
-get-fira sans 600 r
-get-fira sans 600 i
-get-fira sans 700 r
-get-fira sans 700 i
-get-fira mono 400 r
-get-fira mono 700 r
+for weight in {Regular,Medium,SemiBold,Bold}; do
+    get-fira sans $weight Roman
+    get-fira sans $weight Italic
+done
+
+get-fira mono Regular Roman
+get-fira mono Bold Roman
 
 popd
