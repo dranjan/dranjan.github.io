@@ -86,12 +86,18 @@ code {
   line-height: 1.45;
 }
 
-.highlight {
-  line-height: 1.2;
+.highlight .table-wrapper .highlighttable pre {
+  line-height: 1.6;  // This seems to be the correct value to achieve 1.2.
+                     // I'm not sure why.
 }
 
-.text-mono {
+.highlight .table-wrapper td.linenos {
+  border-right: $border $border-color;
+}
+
+code, pre, .text-mono, .highlight {
   font-family: "Fira Mono", $mono-font-family !important;
+  line-height: 1.2;
 }
 
 .center-image {
