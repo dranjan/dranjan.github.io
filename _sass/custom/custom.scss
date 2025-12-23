@@ -91,6 +91,11 @@ code {
                      // I'm not sure why.
 }
 
+.highlight .table-wrapper td.linenos pre {
+  margin-right: 0.5em;
+  margin-left: 0.5em;
+}
+
 .highlight .table-wrapper td.linenos {
   border-right: $border $border-color;
 }
@@ -104,6 +109,10 @@ code, pre, .text-mono, .highlight {
   display: block;
   margin-left: auto;
   margin-right: auto;
+}
+
+col.linenos {
+  width: 0;
 }
 
 h2,h3,h4,h5{ background-color: #ffeeff; }
