@@ -29,9 +29,9 @@ $default: #37f;
 .highlight .kp { color: $default; } /* Keyword.Pseudo */
 .highlight .kr { color: $default; } /* Keyword.Reserved */
 .highlight .kt { color: #f3b; } /* Keyword.Type */
-.highlight .ld { color: $default; } /* Literal.Date */
-.highlight .m { color: #$default; } /* Literal.Number */
-.highlight .s { color: $default; } /* Literal.String */
+.highlight .ld { color: #fd7; } /* Literal.Date */
+.highlight .m { color: $default; } /* Literal.Number */
+.highlight .s { color: #fd7; } /* Literal.String */
 .highlight .na { color: #86f; } /* Name.Attribute */
 .highlight .nb { color: #fb3; } /* Name.Builtin */
 .highlight .nc { color: #f77; } /* Name.Class */
@@ -46,7 +46,7 @@ $default: #37f;
 .highlight .py { color: #ddd; } /* Name.Property */
 .highlight .nt { color: #f73; } /* Name.Tag */
 .highlight .nv { color: #f3b; } /* Name.Variable */
-.highlight .ow { color: $default; } /* Operator.Word */
+.highlight .ow { color: #f37; } /* Operator.Word */
 .highlight .w { color: #ddd; } /* Text.Whitespace */
 .highlight .mf { color: #b3f; } /* Literal.Number.Float */
 .highlight .mh { color: #b3f; } /* Literal.Number.Hex */
@@ -56,7 +56,7 @@ $default: #37f;
 .highlight .sc { color: #bb7; } /* Literal.String.Char */
 .highlight .sd { color: #bb7; } /* Literal.String.Doc */
 .highlight .s2 { color: #bb7; } /* Literal.String.Double */
-.highlight .se { color: #$default; } /* Literal.String.Escape */
+.highlight .se { color: $default; } /* Literal.String.Escape */
 .highlight .sh { color: #a6f; } /* Literal.String.Heredoc */
 .highlight .si { color: #bb7; } /* Literal.String.Interpol */
 .highlight .sx { color: #bb7; } /* Literal.String.Other */
