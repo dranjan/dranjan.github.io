@@ -115,6 +115,26 @@ col.linenos {
   width: 0;
 }
 
+.katex {
+  font-size: 1.0em !important;
+}
+
+@include mq(sm) {
+  .katex {
+    font-size: 1.1em !important;
+  }
+}
+
+@include mq(md) {
+  .katex {
+    font-size: 1.2em !important;
+  }
+}
+
+span.katex {
+  overflow-x: scroll;
+}
+
 h1 { color: #fff; }
 h2,h3,h4,h5{ background-color: #111; padding: 5px; }
 h1,h2,h3,h4,h5,h6{ font-weight: bold; code { font-weight: bold; }}
