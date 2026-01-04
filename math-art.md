@@ -38,8 +38,8 @@ The image shown here is an attempt at a nice visualization of that concept.
 [![Link to image](assets/images/twisted-pair-v09-thumb.png)](assets/images/twisted-pair-v09.png)
 
 This is a visualization of a particular two-generator Kleinian group.
-I'm working on a full description, but until that's done,
-maybe you can reverse-engineer my work from the image!
+
+[Source code](https://github.com/dranjan/twisted-pair-fractal)
 
 # Pentagonal Wave Interference Fractal
 
